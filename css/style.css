@@ -1,0 +1,1217 @@
+/* Variáveis CSS para cores e fontes */
+:root {
+    --primary-color: #007AFF;
+    /* Azul iOS */
+    --secondary-color: #EFEFF4;
+    /* Cinza claro de fundo iOS */
+    --text-color: #1C1C1E;
+    /* Texto escuro */
+    --light-text-color: #8E8E93;
+    /* Texto cinza secundário */
+    --white-color: #FFFFFF;
+    --danger-color: #FF3B30;
+    /* Vermelho iOS */
+    --success-color: #34C759;
+    /* Verde iOS */
+    --border-color: #C6C6C8;
+    --indicator-bg-color: #FFCC00;
+    /* Amarelo para indicador de reserva */
+    --indicator-text-color: #4A4A4A;
+    /* Cor do texto no indicador */
+    --order-indicator-bg-color: #C7C7CC;
+    /* Cinza para indicador de pedido */
+    --order-indicator-text-color: #3A3A3C;
+    /* Cor do texto no indicador de pedido */
+
+
+    --font-family-base: 'Montserrat', sans-serif;
+    --border-radius-base: 10px;
+}
+
+/* Reset e Estilos Globais */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px 10px;
+}
+
+#app {
+    background-color: var(--white-color);
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 700px;
+    /* Garante altura mínima para um bom layout */
+}
+
+/* Header / Navegação Principal */
+header {
+    background-color: var(--white-color);
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Permite que os itens do header quebrem a linha */
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    /* Espaço abaixo do título */
+    width: 100%;
+    /* Título ocupa toda a largura */
+}
+
+.tab-navigation {
+    display: flex;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius-base);
+    overflow: hidden;
+    width: 100%;
+    /* Navegação de abas ocupa toda a largura */
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--light-text-color);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    display: flex;
+    /* Adicionado para centralizar ícone e texto */
+    align-items: center;
+    /* Adicionado para centralizar ícone e texto */
+    justify-content: center;
+    /* Adicionado para centralizar ícone e texto */
+    gap: 5px;
+    /* Espaço entre ícone e texto */
+}
+
+.tab-button.active {
+    background-color: var(--white-color);
+    color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius-base);
+}
+
+/* Conteúdo Principal (Views) */
+.content-view {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Calendar View */
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-nav button {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.calendar-nav button:hover {
+    background-color: #0056b3;
+}
+
+.calendar-nav h2 {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.calendar-day-header {
+    font-weight: 600;
+    color: var(--light-text-color);
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.calendar-day {
+    padding: 12px 0 30px;
+    /* Aumenta padding inferior para a tarja */
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 16px;
+    font-weight: 400;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 80px;
+    /* Aumenta a altura mínima */
+    overflow: hidden;
+    /* Garante que o texto truncado não vaze */
+}
+
+.calendar-day:not(.inactive):hover {
+    background-color: var(--secondary-color);
+}
+
+.calendar-day.inactive {
+    color: var(--light-text-color);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.calendar-day.current-day {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.calendar-day.selected-day {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    font-weight: 600;
+}
+
+/* Indicador de reserva no dia do calendário (tarja retangular) */
+.calendar-day .reservation-indicator,
+.calendar-day .order-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 3px 5px;
+    font-size: 10px;
+    /* Tamanho da fonte da tarja */
+    font-weight: 500;
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);
+    /* Borda inferior arredondada */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;
+    /* Altura da tarja */
+
+    /* Estilos para truncar texto */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: none;
+    /* Escondido por padrão */
+}
+
+.calendar-day .reservation-indicator {
+    background-color: var(--indicator-bg-color);
+    /* Cor de fundo da tarja */
+    color: var(--indicator-text-color);
+    /* Cor do texto na tarja */
+}
+
+.calendar-day .order-indicator {
+    background-color: var(--order-indicator-bg-color);
+    color: var(--order-indicator-text-color);
+}
+
+.calendar-day.has-reservation .reservation-indicator {
+    display: block;
+    /* Exibe se houver reserva */
+}
+
+.calendar-day.has-reservation.current-day .reservation-indicator {
+    background-color: var(--primary-color);
+    /* Tarja azul no dia atual com reserva */
+    color: var(--white-color);
+}
+
+.calendar-day.has-reservation.selected-day .reservation-indicator {
+    background-color: #0056b3;
+    /* Um tom mais escuro de azul para o dia selecionado com reserva */
+    color: var(--white-color);
+}
+
+/* Estilos para dias com pedido */
+.calendar-day.has-order .order-indicator {
+    display: block;
+    /* Exibe se houver pedido */
+}
+
+.calendar-day.has-order.current-day .order-indicator {
+    background-color: var(--order-indicator-bg-color);
+    /* Mantém cor para dia atual com pedido */
+    color: var(--order-indicator-text-color);
+}
+
+.calendar-day.has-order.selected-day .order-indicator {
+    background-color: var(--order-indicator-bg-color);
+    /* Mantém cor para dia selecionado com pedido */
+    color: var(--order-indicator-text-color);
+}
+
+/* Lógica de superposição para indicadores se houver ambos */
+.calendar-day.has-reservation.has-order .reservation-indicator {
+    bottom: 25px;
+    /* Eleva a tarja de reserva se houver pedido */
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+}
+
+.calendar-day.has-reservation.has-order .order-indicator {
+    bottom: 0;
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);
+}
+
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: var(--white-color);
+    padding: 25px;
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-height: 90vh;
+    /* Limita a altura do modal */
+    overflow-y: auto;
+    /* Adiciona scroll se o conteúdo for grande */
+}
+
+.modal-overlay.visible .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.modal-close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--light-text-color);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.modal-close-button:hover {
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--light-text-color);
+}
+
+/* Checkbox switch style */
+.form-group.checkbox-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--secondary-color);
+    padding: 12px 15px;
+    border-radius: var(--border-radius-base);
+}
+
+.form-group.checkbox-switch label {
+    margin-bottom: 0;
+    color: var(--text-color);
+    font-weight: 400;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: var(--white-color);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--primary-color);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+
+.form-group input:not([type="checkbox"]),
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-family: var(--font-family-base);
+    font-size: 16px;
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+    appearance: none;
+    /* Remove default arrow for selects */
+    resize: vertical;
+    min-height: 48px;
+    /* Adjusted min-height for inputs/selects */
+}
+
+.form-group textarea {
+    min-height: 80px;
+}
+
+
+/* NOVIDADE: Estilo para o select de tipo de agendamento (altura menor, texto bold) */
+.form-group select#item-type {
+    padding: 8px 15px;
+    /* Altura menor */
+    font-weight: 600;
+    /* Texto bold */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%238E8E93' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 24px;
+}
+
+/* NOVIDADE: Estilo para as opções do select de tipo (texto normal nas opções) */
+.form-group select#item-type option {
+    font-weight: 400;
+}
+
+/* NEW: Styles for the courtesy options "select simulacrum" */
+#courtesy-options-list {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    background-color: var(--secondary-color);
+    padding: 5px;
+    max-height: 150px;
+    /* Limit height for scroll */
+    overflow-y: auto;
+}
+
+.courtesy-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    margin-bottom: 2px;
+    background-color: var(--white-color);
+    border-radius: calc(var(--border-radius-base) - 4px);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    border: 1px solid transparent;
+}
+
+.courtesy-item:hover {
+    background-color: #F0F0F0;
+}
+
+.courtesy-item.selected {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border-color: var(--primary-color);
+}
+
+.courtesy-item.selected .delete-courtesy-button {
+    color: var(--white-color);
+    /* Keep delete icon white when selected */
+}
+
+.courtesy-item .delete-courtesy-button {
+    background: none;
+    border: none;
+    color: var(--light-text-color);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.courtesy-item .delete-courtesy-button:hover {
+    color: var(--danger-color);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--white-color);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+}
+
+button.primary-button {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    border-radius: var(--border-radius-base);
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button.primary-button:hover {
+    background-color: #0056b3;
+}
+
+button.secondary-button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+button.secondary-button:hover {
+    background-color: #E0E0E5;
+    border-color: var(--primary-color);
+}
+
+/* Alert Modal */
+.alert-modal-content {
+    text-align: center;
+}
+
+.alert-modal-content h3 {
+    margin-bottom: 10px;
+}
+
+.alert-modal-content p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.alert-modal-content.error h3 {
+    color: var(--danger-color);
+}
+
+.alert-modal-content.success h3 {
+    color: var(--success-color);
+}
+
+.alert-modal-content.info h3 {
+    color: var(--primary-color);
+}
+
+.alert-modal-content.warning h3 {
+    color: #FFCC00;
+}
+
+
+/* Reservation / Order List in Modal */
+#existing-items {
+    margin-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#existing-items h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.item-list-container {
+    /* Reservas/Pedidos serão injetadas aqui */
+}
+
+.item-list-container p#no-items-message {
+    text-align: center;
+    color: var(--light-text-color);
+    padding: 10px 0;
+}
+
+.reservation-item,
+.order-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.reservation-item:last-child,
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-details {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.item-details p {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.item-details .time {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.item-details .name,
+.item-details .phone,
+.item-details .description {
+    color: var(--light-text-color);
+}
+
+.item-details .birthday-info,
+.item-details .observations {
+    font-style: italic;
+    color: var(--light-text-color);
+    font-size: 13px;
+}
+
+.item-details .birthday-info strong {
+    color: var(--text-color);
+}
+
+
+.item-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.item-actions button,
+.item-actions a.whatsapp-link {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--light-text-color);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-actions button.edit:hover {
+    color: var(--primary-color);
+}
+
+.item-actions button.delete:hover {
+    color: var(--danger-color);
+}
+
+.item-actions button.print:hover {
+    color: var(--text-color);
+}
+
+.item-actions a.whatsapp-link {
+    color: var(--success-color);
+    text-decoration: none;
+}
+
+.item-actions a.whatsapp-link:hover {
+    opacity: 0.8;
+}
+
+/* Upcoming Reservations/Orders List */
+#upcoming-list-container,
+#order-list-container {
+    padding-top: 10px;
+}
+
+.upcoming-date-group {
+    margin-bottom: 20px;
+    background-color: var(--white-color);
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.upcoming-date-group h4 {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.upcoming-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.upcoming-item:last-child {
+    border-bottom: none;
+}
+
+.upcoming-item-details {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.upcoming-item-details .time {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+.upcoming-item-details .name-qty,
+.upcoming-item-details .phone,
+.upcoming-item-details .description {
+    color: var(--light-text-color);
+    font-size: 14px;
+}
+
+.upcoming-item-details .birthday-info,
+.upcoming-item-details .observations {
+    font-style: italic;
+    color: var(--light-text-color);
+    font-size: 13px;
+}
+
+.upcoming-item-details .birthday-info strong {
+    color: var(--text-color);
+}
+
+.upcoming-item-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.upcoming-item-actions button,
+.upcoming-item-actions a {
+    text-decoration: none;
+    color: var(--light-text-color);
+    font-size: 20px;
+    padding: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upcoming-item-actions a.whatsapp-link {
+    color: var(--success-color);
+}
+
+.upcoming-item-actions button.edit:hover {
+    color: var(--primary-color);
+}
+
+.upcoming-item-actions button.delete:hover {
+    color: var(--danger-color);
+}
+
+.upcoming-item-actions button.print:hover {
+    color: var(--text-color);
+}
+
+.upcoming-item-actions a:hover {
+    opacity: 0.8;
+}
+
+#no-upcoming-items-message,
+#no-orders-message {
+    text-align: center;
+    color: var(--light-text-color);
+    padding: 20px;
+}
+
+/* Estilos para a aba "Pedidos" */
+#orders-view h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Estilos para a aba "Contatos" */
+#contacts-view h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+#contact-search-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-family: var(--font-family-base);
+    font-size: 16px;
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+    margin-bottom: 15px;
+}
+
+#contact-list-container {
+    margin-top: 10px;
+}
+
+.contact-item {
+    background-color: var(--white-color);
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.contact-details {
+    flex-grow: 1;
+}
+
+.contact-details h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.contact-details p {
+    font-size: 14px;
+    color: var(--light-text-color);
+    margin-bottom: 2px;
+}
+
+.contact-details p.contact-notes {
+    font-style: italic;
+    color: #666;
+    margin-top: 5px;
+}
+
+.contact-actions {
+    display: flex;
+    justify-content: flex-end;
+    /* Alinha botões à direita */
+    gap: 8px;
+    margin: auto;
+    margin-top: 10px;
+    /* Espaço entre detalhes e ações */
+}
+
+.contact-actions button,
+.contact-actions a.whatsapp-link {
+    background: var(--secondary-color);
+    color: var(--light-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.contact-actions button:hover {
+    background-color: #E0E0E5;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.contact-actions button.delete:hover {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.contact-actions a.whatsapp-link {
+    color: var(--success-color);
+    border-color: var(--success-color);
+    background-color: #E6F8ED;
+}
+
+.contact-actions a.whatsapp-link:hover {
+    opacity: 0.9;
+    background-color: #D6F1E3;
+}
+
+.contact-actions button .mdi {
+    font-size: 18px;
+}
+
+#no-contacts-message {
+    text-align: center;
+    color: var(--light-text-color);
+    padding: 20px;
+}
+
+/* NEW: Contact Form Modal */
+#contact-form-modal-overlay h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Moved to the top of the contacts view */
+#contacts-view .top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+#add-contact-button-main {
+    flex-shrink: 0;
+    /* Prevents button from shrinking too much */
+    width: auto;
+    /* Allow button to size naturally */
+    padding: 12px 15px;
+    /* Adjust padding for a more compact button */
+    font-size: 16px;
+    /* Adjust font size */
+    margin-top: 0;
+    /* Remove top margin */
+    width: 100%;
+}
+
+#contacts-view #contact-search-input {
+    margin-bottom: 0;
+    /* Remove bottom margin as it's now in a flex container */
+    flex-grow: 1;
+    /* Allow search input to grow */
+}
+
+/* Save Contact button in Item Modal */
+#save-contact-from-item {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+#save-contact-from-item:hover {
+    background-color: #E0E0E5;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+
+
+#contact-search-results {
+    position: absolute;
+    width: 100%;
+    background-color: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    /* Hidden by default */
+}
+
+.contact-search-result-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--secondary-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.contact-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.contact-search-result-item:hover {
+    background-color: var(--secondary-color);
+}
+
+.contact-search-result-item span {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.contact-search-result-item small {
+    font-size: 13px;
+    color: var(--light-text-color);
+}
+
+#contact-search-results.visible {
+    display: block;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    #app {
+        border-radius: 0;
+        box-shadow: none;
+        height: 100vh;
+    }
+
+    body {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .content-view {
+        padding: 15px;
+    }
+
+    .calendar-day {
+        min-height: 70px;
+        /* Ajusta altura para mobile */
+        font-size: 14px;
+    }
+
+    .calendar-day .reservation-indicator,
+    .calendar-day .order-indicator {
+        font-size: 9px;
+        /* Ajusta fonte da tarja para mobile */
+        height: 20px;
+    }
+
+    .calendar-day.has-reservation.has-order .reservation-indicator {
+        bottom: 20px;
+    }
+
+    .modal-content {
+        border-radius: 0;
+        max-width: none;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out, opacity 0.3s ease;
+    }
+
+    .modal-overlay.visible .modal-content {
+        transform: translateY(0);
+    }
+
+    .modal-header {
+        padding-top: env(safe-area-inset-top);
+    }
+
+    .tab-button {
+        font-size: 13px;
+        /* Ajuste para caber 4 abas */
+        padding: 8px 8px;
+        gap: 3px;
+    }
+
+    .tab-button .mdi {
+        font-size: 18px;
+    }
+
+    .item-actions button,
+    .item-actions a.whatsapp-link,
+    .upcoming-item-actions button,
+    .upcoming-item-actions a {
+        font-size: 18px;
+    }
+
+    .contact-actions button,
+    .contact-actions a {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .contact-actions button .mdi {
+        font-size: 16px;
+    }
+
+    #contacts-view .top-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #add-contact-button-main {
+        margin-top: 10px;
+        width: 100%;
+    }
+}
+
+/* Estilos para impressão */
+@media print {
+    body>*:not(.print-modal) {
+        display: none !important;
+    }
+
+    .print-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        padding: 20px;
+        box-sizing: border-box;
+        font-family: var(--font-family-base);
+        color: var(--text-color);
+        display: block !important;
+    }
+
+    .print-modal h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: var(--primary-color);
+    }
+
+    .print-modal h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: var(--text-color);
+    }
+
+    .print-modal p {
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+
+    .print-modal p strong {
+        color: var(--text-color);
+    }
+
+    .print-modal .whatsapp-link {
+        display: none;
+        /* Não exibe o link do WhatsApp na impressão */
+    }
+}
