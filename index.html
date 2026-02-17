@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Reservas, Pedidos e Contatos - iOS Style</title>
+    <title>ReservaPro - Gestão Inteligente</title>
 
     <!-- Montserrat Font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
@@ -19,21 +19,7 @@
 <body>
     <div id="app">
         <header>
-            <h1>Sistema de Agendamento</h1>
-            <div class="tab-navigation">
-                <button id="calendarTab" class="tab-button active">
-                    <span class="mdi mdi-calendar"></span> Calendário
-                </button>
-                <button id="upcomingItemsTab" class="tab-button">
-                    <span class="mdi mdi-format-list-bulleted"></span> Reservas
-                </button>
-                <button id="ordersTab" class="tab-button">
-                    <span class="mdi mdi-shopping"></span> Pedidos
-                </button>
-                <button id="contactsTab" class="tab-button">
-                    <span class="mdi mdi-account-box-multiple"></span> Contatos
-                </button>
-            </div>
+            <h1>Agendamentos</h1>
         </header>
 
         <main>
@@ -57,7 +43,13 @@
 
             <!-- Upcoming Reservations View -->
             <section id="upcoming-items-view" class="content-view" style="display: none;">
-                <h2>Próximas Reservas</h2>
+                <div class="view-header">
+                    <h2>Próximas Reservas</h2>
+                </div>
+                <div class="search-bar-container">
+                    <span class="mdi mdi-magnify search-icon"></span>
+                    <input type="text" id="upcoming-search-input" placeholder="Buscar por nome ou observação...">
+                </div>
                 <div id="upcoming-list-container">
                     <p id="no-upcoming-items-message">Nenhuma reserva futura encontrada.</p>
                 </div>
@@ -65,18 +57,25 @@
 
             <!-- Orders View -->
             <section id="orders-view" class="content-view" style="display: none;">
-                <h2>Pedidos Pendentes</h2>
+                <div class="view-header">
+                    <h2>Pedidos Pendentes</h2>
+                </div>
+                <div class="search-bar-container">
+                    <span class="mdi mdi-magnify search-icon"></span>
+                    <input type="text" id="orders-search-input" placeholder="Buscar por nome ou pedido...">
+                </div>
                 <div id="order-list-container">
                     <p id="no-orders-message">Nenhum pedido pendente encontrado.</p>
                 </div>
             </section>
 
-            <!-- Contacts View -->
             <section id="contacts-view" class="content-view" style="display: none;">
                 <h2>Meus Contatos</h2>
                 <div class="top-actions">
-                    <input type="text" id="contact-search-input" style="display:none;"
-                        placeholder="Buscar contato por nome ou telefone...">
+                    <div class="search-bar-container">
+                        <span class="mdi mdi-magnify search-icon"></span>
+                        <input type="text" id="contact-search-input" placeholder="Buscar nome ou telefone...">
+                    </div>
                     <button type="button" class="primary-button" id="add-contact-button-main">
                         <span class="mdi mdi-plus"></span> Adicionar
                     </button>
@@ -87,6 +86,25 @@
             </section>
         </main>
     </div>
+
+    <nav class="tab-navigation">
+        <button id="calendarTab" class="tab-button active">
+            <span class="mdi mdi-calendar"></span>
+            <span>Calendário</span>
+        </button>
+        <button id="upcomingItemsTab" class="tab-button">
+            <span class="mdi mdi-format-list-bulleted"></span>
+            <span>Reservas</span>
+        </button>
+        <button id="ordersTab" class="tab-button">
+            <span class="mdi mdi-shopping"></span>
+            <span>Pedidos</span>
+        </button>
+        <button id="contactsTab" class="tab-button">
+            <span class="mdi mdi-account-box-multiple"></span>
+            <span>Contatos</span>
+        </button>
+    </nav>
 
     <!-- Reservation/Order Modal -->
     <div id="item-modal-overlay" class="modal-overlay">

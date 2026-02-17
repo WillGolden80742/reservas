@@ -59,6 +59,9 @@ const DOM = {
     orderListContainer: document.getElementById('order-list-container'),
     noOrdersMessage: document.getElementById('no-orders-message'),
 
+    upcomingSearchInput: document.getElementById('upcoming-search-input'), // NEW
+    ordersSearchInput: document.getElementById('orders-search-input'), // NEW
+
     contactsSearchInput: document.getElementById('contact-search-input'), // NEW
     contactListContainer: document.getElementById('contact-list-container'), // NEW
     noContactsMessage: document.getElementById('no-contacts-message'), // NEW
@@ -111,6 +114,16 @@ function getDisplayDate(dateString) {
 
 function getMonthName(date) {
     return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+}
+
+// --- Funções de Utilidade de Pesquisa (Normalized Search) ---
+function normalizeString(str) {
+    if (!str) return '';
+    return str.toString()
+        .toLowerCase()
+        .normalize('NFD') // Decompose combined characters into base + accent
+        .replace(/[\u0300-\u036f]/g, '') // Remove accent characters
+        .trim();
 }
 
 // --- Máscara de Telefone ---
@@ -192,15 +205,6 @@ function renderCalendar() {
         dayDiv.dataset.date = formattedDate;
         dayDiv.textContent = day;
 
-        const reservationIndicator = document.createElement('div');
-        reservationIndicator.classList.add('reservation-indicator');
-        dayDiv.appendChild(reservationIndicator);
-
-        const orderIndicator = document.createElement('div');
-        orderIndicator.classList.add('order-indicator');
-        dayDiv.appendChild(orderIndicator);
-
-
         if (formattedDate === todayFormatted) {
             dayDiv.classList.add('current-day');
         }
@@ -216,11 +220,17 @@ function renderCalendar() {
 
         if (reservationsForDay.length > 0) {
             dayDiv.classList.add('has-reservation');
+            const reservationIndicator = document.createElement('div');
+            reservationIndicator.classList.add('reservation-indicator');
             reservationIndicator.textContent = reservationsForDay[0].name;
+            dayDiv.appendChild(reservationIndicator);
         }
         if (ordersForDay.length > 0) {
             dayDiv.classList.add('has-order');
+            const orderIndicator = document.createElement('div');
+            orderIndicator.classList.add('order-indicator');
             orderIndicator.textContent = ordersForDay[0].name;
+            dayDiv.appendChild(orderIndicator);
         }
 
         dayDiv.addEventListener('click', () => handleDayClick(formattedDate));
@@ -592,7 +602,7 @@ function printItem(id) {
 }
 
 // --- Funções da Aba "Próximas Reservas" ---
-function renderUpcomingItems() {
+function renderUpcomingItems(filter = '') {
     DOM.upcomingListContainer.innerHTML = '';
 
     const today = new Date();
@@ -600,7 +610,19 @@ function renderUpcomingItems() {
     const todayFormatted = getFormattedDate(today);
 
     const upcomingReservations = items
-        .filter(item => item.type === 'reservation' && item.date >= todayFormatted)
+        .filter(item => {
+            const matchesType = item.type === 'reservation' && item.date >= todayFormatted;
+            if (!matchesType) return false;
+
+            const searchTerm = normalizeString(filter);
+            const normalizedName = normalizeString(item.name);
+            const normalizedObs = normalizeString(item.observations);
+            const rawPhone = item.phone.replace(/\D/g, '');
+
+            return normalizedName.includes(searchTerm) ||
+                (item.observations && normalizedObs.includes(searchTerm)) ||
+                rawPhone.includes(searchTerm);
+        })
         .sort((a, b) => {
             if (a.date !== b.date) {
                 return a.date.localeCompare(b.date);
@@ -693,7 +715,7 @@ function renderUpcomingItems() {
 }
 
 // Função para renderizar a lista de Pedidos
-function renderOrdersList() {
+function renderOrdersList(filter = '') {
     DOM.orderListContainer.innerHTML = '';
 
     const today = new Date();
@@ -701,7 +723,19 @@ function renderOrdersList() {
     const todayFormatted = getFormattedDate(today);
 
     const pendingOrders = items
-        .filter(item => item.type === 'order' && item.date >= todayFormatted)
+        .filter(item => {
+            const matchesType = item.type === 'order' && item.date >= todayFormatted;
+            if (!matchesType) return false;
+
+            const searchTerm = normalizeString(filter);
+            const normalizedName = normalizeString(item.name);
+            const normalizedDesc = normalizeString(item.description);
+            const rawPhone = item.phone.replace(/\D/g, '');
+
+            return normalizedName.includes(searchTerm) ||
+                (item.description && normalizedDesc.includes(searchTerm)) ||
+                rawPhone.includes(searchTerm);
+        })
         .sort((a, b) => {
             if (a.date !== b.date) {
                 return a.date.localeCompare(b.date);
@@ -792,11 +826,18 @@ function renderOrdersList() {
 function renderContacts(filter = '') {
     DOM.contactListContainer.innerHTML = '';
 
+    const searchTerm = normalizeString(filter);
+
     const filteredContacts = contacts
-        .filter(contact =>
-            contact.name.toLowerCase().includes(filter.toLowerCase()) ||
-            contact.phone.replace(/\D/g, '').includes(filter.replace(/\D/g, ''))
-        )
+        .filter(contact => {
+            const normalizedName = normalizeString(contact.name);
+            const normalizedNotes = normalizeString(contact.notes);
+            const rawPhone = contact.phone.replace(/\D/g, '');
+
+            return normalizedName.includes(searchTerm) ||
+                normalizedNotes.includes(searchTerm) ||
+                rawPhone.includes(searchTerm);
+        })
         .sort((a, b) => a.name.localeCompare(b.name));
 
     if (filteredContacts.length === 0) {
@@ -914,10 +955,14 @@ function searchContactsInItemModal(filter) {
         return;
     }
 
-    const filteredContacts = contacts.filter(contact =>
-        contact.name.toLowerCase().includes(filter.toLowerCase()) ||
-        contact.phone.replace(/\D/g, '').includes(filter.replace(/\D/g, ''))
-    ).sort((a, b) => a.name.localeCompare(b.name));
+    const searchTerm = normalizeString(filter);
+
+    const filteredContacts = contacts.filter(contact => {
+        const normalizedName = normalizeString(contact.name);
+        const rawPhone = contact.phone.replace(/\D/g, '');
+
+        return normalizedName.includes(searchTerm) || rawPhone.includes(searchTerm);
+    }).sort((a, b) => a.name.localeCompare(b.name));
 
     if (filteredContacts.length === 0) {
         DOM.contactSearchResults.classList.remove('visible');
@@ -958,10 +1003,10 @@ function showView(viewId) {
         renderCalendar();
     } else if (viewId === 'upcoming-items-view') {
         DOM.upcomingItemsTab.classList.add('active');
-        renderUpcomingItems();
+        renderUpcomingItems(DOM.upcomingSearchInput.value);
     } else if (viewId === 'orders-view') {
         DOM.ordersTab.classList.add('active');
-        renderOrdersList();
+        renderOrdersList(DOM.ordersSearchInput.value);
     } else if (viewId === 'contacts-view') { // NEW
         DOM.contactsTab.classList.add('active');
         renderContacts(DOM.contactsSearchInput.value); // Render contacts with current filter
@@ -1059,7 +1104,15 @@ document.addEventListener('DOMContentLoaded', () => {
         renderContacts(e.target.value);
     });
 
-    // NEW: Contact search input listener for item modal integrated into name input
+    // NEW: Search input listeners
+    DOM.upcomingSearchInput.addEventListener('input', (e) => {
+        renderUpcomingItems(e.target.value);
+    });
+
+    DOM.ordersSearchInput.addEventListener('input', (e) => {
+        renderOrdersList(e.target.value);
+    });
+
     DOM.nameInput.addEventListener('input', (e) => {
         searchContactsInItemModal(e.target.value);
     });
