@@ -19,22 +19,27 @@
 <body>
     <div id="app">
         <header>
-            <h1>Sistema de Agendamento</h1>
-            <div class="tab-navigation">
-                <button id="calendarTab" class="tab-button active">
-                    <span class="mdi mdi-calendar"></span> Calendário
-                </button>
-                <button id="upcomingItemsTab" class="tab-button">
-                    <span class="mdi mdi-format-list-bulleted"></span> Reservas
-                </button>
-                <button id="ordersTab" class="tab-button">
-                    <span class="mdi mdi-shopping"></span> Pedidos
-                </button>
-                <button id="contactsTab" class="tab-button">
-                    <span class="mdi mdi-account-box-multiple"></span> Contatos
-                </button>
-            </div>
+            <h1>Agenda</h1>
         </header>
+
+        <nav class="bottom-nav">
+            <button id="calendarTab" class="tab-button active">
+                <span class="mdi mdi-calendar-blank"></span>
+                <span>Calendário</span>
+            </button>
+            <button id="upcomingItemsTab" class="tab-button">
+                <span class="mdi mdi-clock-outline"></span>
+                <span>Reservas</span>
+            </button>
+            <button id="ordersTab" class="tab-button">
+                <span class="mdi mdi-shopping-outline"></span>
+                <span>Pedidos</span>
+            </button>
+            <button id="contactsTab" class="tab-button">
+                <span class="mdi mdi-account-group-outline"></span>
+                <span>Contatos</span>
+            </button>
+        </nav>
 
         <main>
             <!-- Calendar View -->
@@ -75,10 +80,14 @@
             <section id="contacts-view" class="content-view" style="display: none;">
                 <h2>Meus Contatos</h2>
                 <div class="top-actions">
-                    <input type="text" id="contact-search-input" style="display:none;"
-                        placeholder="Buscar contato por nome ou telefone...">
-                    <button type="button" class="primary-button" id="add-contact-button-main">
-                        <span class="mdi mdi-plus"></span> Adicionar
+                    <div class="search-bar">
+                        <span class="mdi mdi-magnify"></span>
+                        <input type="text" id="contact-search-input" placeholder="Buscar contatos...">
+                    </div>
+                </div>
+                <div class="add-button-container">
+                    <button type="button" class="primary-button add-button" id="add-contact-button-main">
+                        <span class="mdi mdi-plus"></span>
                     </button>
                 </div>
                 <div id="contact-list-container">
