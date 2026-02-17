@@ -37,91 +37,88 @@
 
 body {
     font-family: var(--font-family-base);
-    background-color: var(--secondary-bg);
+    background-color: var(--secondary-color);
     color: var(--text-color);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.4;
+    line-height: 1.5;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
+    padding: 20px 10px;
 }
 
 #app {
     background-color: var(--white-color);
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 500px;
-    min-height: 100vh;
+    max-width: 600px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    position: relative;
-    padding-bottom: calc(85px + var(--safe-area-bottom));
-    /* Espaço para o menu inferior */
+    min-height: 700px;
+    /* Garante altura mínima para um bom layout */
 }
 
-/* Header / Navegação Principal Style iOS */
+/* Header / Navegação Principal */
 header {
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 60px 20px 10px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    background-color: var(--white-color);
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Permite que os itens do header quebrem a linha */
 }
 
 header h1 {
-    font-size: 34px;
-    font-weight: 700;
-    letter-spacing: -1px;
+    font-size: 24px;
+    font-weight: 600;
     color: var(--text-color);
+    margin-bottom: 10px;
+    /* Espaço abaixo do título */
+    width: 100%;
+    /* Título ocupa toda a largura */
 }
 
-/* Bottom Navigation iOS Style */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 500px;
-    background-color: rgba(249, 249, 249, 0.94);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 0.5px solid var(--separator-color);
+.tab-navigation {
     display: flex;
-    justify-content: space-around;
-    padding: 10px 10px calc(10px + var(--safe-area-bottom));
-    z-index: 1000;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius-base);
+    overflow: hidden;
+    width: 100%;
+    /* Navegação de abas ocupa toda a largura */
 }
 
 .tab-button {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    color: var(--secondary-text);
-    gap: 4px;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.tab-button .mdi {
-    font-size: 24px;
-    line-height: 1;
-}
-
-.tab-button span:last-child {
-    font-size: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
     font-weight: 500;
+    color: var(--light-text-color);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    display: flex;
+    /* Adicionado para centralizar ícone e texto */
+    align-items: center;
+    /* Adicionado para centralizar ícone e texto */
+    justify-content: center;
+    /* Adicionado para centralizar ícone e texto */
+    gap: 5px;
+    /* Espaço entre ícone e texto */
 }
 
 .tab-button.active {
+    background-color: var(--white-color);
     color: var(--primary-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius-base);
 }
 
 /* Conteúdo Principal (Views) */
@@ -860,93 +857,190 @@ button.secondary-button:hover {
     margin-bottom: 20px;
 }
 
-/* Estilos para a aba "Contatos" iOS Style */
+/* Estilos para a aba "Contatos" */
 #contacts-view h2 {
-    font-size: 34px;
-    font-weight: 700;
-    margin-bottom: 5px;
-    padding: 10px 0;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
 }
 
-.search-bar {
-    position: relative;
-    background-color: #7676801F;
-    /* iOS search bar gray with opacity */
-    border-radius: 10px;
-    padding: 7px 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 10px 0 20px;
-}
-
-.search-bar .mdi {
-    color: #3C3C4399;
-    /* 60% opacity secondary text */
-    font-size: 18px;
-}
-
-.search-bar input {
-    background: none;
-    border: none;
-    flex: 1;
-    font-size: 17px;
-    color: var(--text-color);
-    outline: none;
+#contact-search-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
     font-family: var(--font-family-base);
+    font-size: 16px;
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+    margin-bottom: 15px;
 }
 
-.search-bar input::placeholder {
-    color: #3C3C4399;
-}
-
-.add-button-container {
-    position: fixed;
-    right: 20px;
-    bottom: calc(100px + var(--safe-area-bottom));
-    z-index: 90;
-}
-
-button.add-button {
-    width: 56px;
-    height: 56px;
-    border-radius: 28px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-button.add-button:active {
-    transform: scale(0.9);
-}
-
-button.add-button .mdi {
-    font-size: 30px;
+#contact-list-container {
+    margin-top: 10px;
 }
 
 .contact-item {
     background-color: var(--white-color);
-    border-bottom: 0.5px solid var(--separator-color);
-    padding: 12px 0;
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 10px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
+    gap: 8px;
+}
+
+.contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.contact-details {
+    flex-grow: 1;
 }
 
 .contact-details h3 {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 5px;
 }
 
 .contact-details p {
-    font-size: 15px;
-    color: var(--secondary-text);
+    font-size: 14px;
+    color: var(--light-text-color);
+    margin-bottom: 2px;
+}
+
+.contact-details p.contact-notes {
+    font-style: italic;
+    color: #666;
+    margin-top: 5px;
+}
+
+.contact-actions {
+    display: flex;
+    justify-content: flex-end;
+    /* Alinha botões à direita */
+    gap: 8px;
+    margin: auto;
+    margin-top: 10px;
+    /* Espaço entre detalhes e ações */
+}
+
+.contact-actions button,
+.contact-actions a.whatsapp-link {
+    background: var(--secondary-color);
+    color: var(--light-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.contact-actions button:hover {
+    background-color: #E0E0E5;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.contact-actions button.delete:hover {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+.contact-actions a.whatsapp-link {
+    color: var(--success-color);
+    border-color: var(--success-color);
+    background-color: #E6F8ED;
+}
+
+.contact-actions a.whatsapp-link:hover {
+    opacity: 0.9;
+    background-color: #D6F1E3;
+}
+
+.contact-actions button .mdi {
+    font-size: 18px;
+}
+
+#no-contacts-message {
+    text-align: center;
+    color: var(--light-text-color);
+    padding: 20px;
+}
+
+/* NEW: Contact Form Modal */
+#contact-form-modal-overlay h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Moved to the top of the contacts view */
+#contacts-view .top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+#add-contact-button-main {
+    flex-shrink: 0;
+    /* Prevents button from shrinking too much */
+    width: auto;
+    /* Allow button to size naturally */
+    padding: 12px 15px;
+    /* Adjust padding for a more compact button */
+    font-size: 16px;
+    /* Adjust font size */
+    margin-top: 0;
+    /* Remove top margin */
+    width: 100%;
+}
+
+#contacts-view #contact-search-input {
+    margin-bottom: 0;
+    /* Remove bottom margin as it's now in a flex container */
+    flex-grow: 1;
+    /* Allow search input to grow */
+}
+
+/* Save Contact button in Item Modal */
+#save-contact-from-item {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+#save-contact-from-item:hover {
+    background-color: #E0E0E5;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+
+
+#contact-search-results {
+    position: absolute;
+    width: 100%;
+    background-color: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    /* Hidden by default */
 }
 
 .contact-search-result-item {
