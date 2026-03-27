@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Reserva & Bolos | Nossa Carne</title>
+
+    <!-- Material Design Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/formulario_clientes.css">
+
+</head>
+
+<body>
+
+    <div class="overlay-click" id="overlay"></div>
+
+    <div class="container">
+        <div class="header">
+            <img src="https://static.ifood-static.com.br/image/upload/t_high/logosgde/ef733dfb-3edf-42ef-9aea-9a87b00dcbdc/202510141310_BXc1_i.png"
+                alt="Nossa Carne">
+            <h2>Reserva Nossa Carne</h2>
+        </div>
+
+        <div class="regras-box">
+            • <b>Dias:</b> Somente Segunda a Quinta.<br>
+            • <b>Horário:</b> 12:00 às 21:30.<br>
+            • <b>Convidados:</b> Mínimo de 10 pessoas.<br>
+            • <b>Cortesia:</b> 1kg Grátis (Válido para 10+ pessoas).
+        </div>
+
+        <form id="reservaForm">
+            <div class="campo">
+                <label>Seu Nome</label>
+                <div class="input-container">
+                    <i class="mdi mdi-account"></i>
+                    <input type="text" id="nome" placeholder="Nome completo" required oninput="validarFluxo()">
+                </div>
+            </div>
+
+            <div class="grid-duplo">
+                <div class="campo">
+                    <label>Data (Seg a Qui)</label>
+                    <div class="input-container">
+                        <i class="mdi mdi-calendar"></i>
+                        <div id="data" class="select-simulado" data-value="">Selecione a data</div>
+                        <div id="calendarPanel" class="calendar-panel">
+                            <div class="calendar-header">
+                                <button type="button" onclick="mudarMes(-1); event.stopPropagation();"><i
+                                        class="mdi mdi-chevron-left"></i></button>
+                                <span id="monthYearLabel"></span>
+                                <button type="button" onclick="mudarMes(1); event.stopPropagation();"><i
+                                        class="mdi mdi-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-grid"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label>Hora (12h-21:30)</label>
+                    <div class="input-container">
+                        <i class="mdi mdi-clock-outline"></i>
+                        <div id="horario" class="select-simulado" data-value="">Selecione a hora</div>
+                        <div class="options-container">
+                            <div class="option" data-value="12:00">12:00</div>
+                            <div class="option" data-value="12:30">12:30</div>
+                            <div class="option" data-value="13:00">13:00</div>
+                            <div class="option" data-value="13:30">13:30</div>
+                            <div class="option" data-value="14:00">14:00</div>
+                            <div class="option" data-value="14:30">14:30</div>
+                            <div class="option" data-value="15:00">15:00</div>
+                            <div class="option" data-value="15:30">15:30</div>
+                            <div class="option" data-value="16:00">16:00</div>
+                            <div class="option" data-value="16:30">16:30</div>
+                            <div class="option" data-value="17:00">17:00</div>
+                            <div class="option" data-value="17:30">17:30</div>
+                            <div class="option" data-value="18:00">18:00</div>
+                            <div class="option" data-value="18:30">18:30</div>
+                            <div class="option" data-value="19:00">19:00</div>
+                            <div class="option" data-value="19:30">19:30</div>
+                            <div class="option" data-value="20:00">20:00</div>
+                            <div class="option" data-value="20:30">20:30</div>
+                            <div class="option" data-value="21:00">21:00</div>
+                            <div class="option" data-value="21:30">21:30</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Nº de Convidados (Mín. 10)</label>
+                <div class="input-container">
+                    <i class="mdi mdi-account-group"></i>
+                    <div id="pessoas" class="select-simulado" data-value="">Selecione</div>
+                    <div class="options-container">
+                        <div class="option" data-value="10">10 pessoas</div>
+                        <div class="option" data-value="11">11 pessoas</div>
+                        <div class="option" data-value="12">12 pessoas</div>
+                        <div class="option" data-value="13">13 pessoas</div>
+                        <div class="option" data-value="14">14 pessoas</div>
+                        <div class="option" data-value="15">15 pessoas</div>
+                        <div class="option" data-value="20">20 pessoas</div>
+                        <div class="option" data-value="25">25 pessoas</div>
+                        <div class="option" data-value="30">30 pessoas</div>
+                        <div class="option" data-value="40">40 pessoas</div>
+                        <div class="option" data-value="50">50 pessoas</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Deseja Bolo?</label>
+                <div class="input-container">
+                    <i class="mdi mdi-cake-variant"></i>
+                    <div id="querBolo" class="select-simulado" data-value="nao">Não, apenas a mesa</div>
+                    <div class="options-container">
+                        <div class="option" data-value="nao">Não, apenas a mesa</div>
+                        <div class="option" data-value="sim">Sim, desejo o bolo cortesia 🎂</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="painelBolo" class="secao-bolo">
+                <div id="tipoBoloBadge" class="badge badge-cortesia">🎁 1kg Cortesia Aplicado</div>
+
+                <div class="campo">
+                    <label>Sabor do Bolo</label>
+                    <div class="input-container">
+                        <i class="mdi mdi-format-list-bulleted"></i>
+                        <div id="sabor" class="select-simulado" data-value="Brigadeiro">Brigadeiro</div>
+                        <div class="options-container">
+                            <div class="option" data-value="Brigadeiro">Brigadeiro</div>
+                            <div class="option" data-value="Brigadeiro Maracujá">Brigadeiro Maracujá</div>
+                            <div class="option" data-value="Ninho com Nutella">Ninho com Nutella</div>
+                            <div class="option" data-value="Ninho com Morango">Ninho com Morango</div>
+                            <div class="option" data-value="Ninho com Abacaxi">Ninho com Abacaxi</div>
+                            <div class="option" data-value="Mousse de Chocolate">Mousse de Chocolate</div>
+                            <div class="option" data-value="Prestígio">Prestígio</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Quilos (R$ 95 por kg adicional)</label>
+                    <div class="input-container">
+                        <i class="mdi mdi-weight-kilogram"></i>
+                        <input type="number" id="kg" min="1" value="1" oninput="validarFluxo()">
+                    </div>
+                </div>
+
+                <div id="detalhesFinanceiros" class="info-pagamento" style="display:none;">
+                    <b>Total Excedente: R$ <span id="valorTotal">0,00</span></b><br>
+                    <small>Sinal de 50% via PIX para quilos extras.</small>
+                </div>
+            </div>
+
+            <button type="button" id="btnEnviar" class="btn-enviar" onclick="enviarWhatsApp()" disabled>
+                <i class="mdi mdi-whatsapp"></i> CONCLUIR RESERVA
+            </button>
+        </form>
+    </div>
+
+    <script src="js/formulario_clientes.js"></script>
+
+
+</body>
+
+</html>
