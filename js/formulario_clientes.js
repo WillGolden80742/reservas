@@ -46,7 +46,8 @@ function initCustomSelects() {
                 const text = opt.innerText;
 
                 select.setAttribute('data-value', val);
-                select.innerText = text;
+                const span = select.querySelector('span');
+                if (span) span.innerText = text;
 
                 select.classList.remove('active');
                 select.nextElementSibling.classList.remove('show');
@@ -124,7 +125,8 @@ function renderCalendar() {
                 const diaNome = d.toLocaleDateString('pt-BR', { weekday: 'short' });
 
                 const btnData = document.getElementById('data');
-                btnData.innerText = `${diaNome}, ${displayDate}`;
+                const span = btnData.querySelector('span');
+                if (span) span.innerText = `${diaNome}, ${displayDate}`;
                 btnData.setAttribute('data-value', dataSelecionada);
 
                 fecharTodos();
@@ -162,8 +164,17 @@ function validarFluxo() {
             painelBolo.className = 'secao-bolo modo-cortesia';
             let excedente = Math.max(0, (kg - 1) * VALOR_KG);
             if (excedente > 0) {
-                document.getElementById('valorTotal').innerText = excedente.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const totalFormatado = excedente.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const sinal = (excedente / 2).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+                document.getElementById('valorTotal').innerText = totalFormatado;
                 divFinanceiro.style.display = 'block';
+
+                // Mostrar PIX para quilos extras (sinal de 50%)
+                const pixPagamento = document.getElementById('pixPagamento');
+                const valorInfo = document.getElementById('valorInfo');
+                if (pixPagamento) pixPagamento.style.display = 'block';
+                if (valorInfo) valorInfo.innerText = `VALOR DO SINAL: R$ ${sinal}`;
             } else {
                 divFinanceiro.style.display = 'none';
             }
@@ -202,4 +213,20 @@ function enviarWhatsApp() {
     }
 
     window.open(`https://wa.me/${SEU_TELEFONE}?text=${encodeURIComponent(texto)}`, '_blank');
+}
+
+function copiarPix() {
+    const pixCode = document.getElementById('pixCopiaCola').innerText;
+    navigator.clipboard.writeText(pixCode).then(() => {
+        const btn = document.querySelector('button[onclick="copiarPix()"]');
+        const originalText = btn.innerText;
+        btn.innerText = "COPIADO! ✅";
+        btn.style.background = "#27ae60";
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = "#f39c12";
+        }, 2000);
+    }).catch(err => {
+        alert("Erro ao copiar código PIX. Tente selecionar e copiar manualmente.");
+    });
 }

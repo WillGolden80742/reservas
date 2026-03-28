@@ -21,6 +21,7 @@ body {
     background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
         url('https://static.ifood-static.com.br/image/upload/t_high/logosgde/ef733dfb-3edf-42ef-9aea-9a87b00dcbdc/202510141310_BXc1_i.png');
     background-size: cover;
+    backdrop-filter: blur(20px);
     background-position: center;
     background-attachment: fixed;
     min-height: 100vh;
@@ -115,10 +116,18 @@ label {
     color: #a0a0a0;
     font-size: 20px;
     line-height: 1;
-    display: contents;
-    align-items: center;
     pointer-events: none;
-    z-index: 5;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ajuste específico para ícones dentro do select simulado */
+.select-simulado i {
+    position: absolute;
+    /* Mantém absoluto para alinhar com inputs normais */
+    left: 14px;
 }
 
 input,
@@ -139,6 +148,16 @@ input,
     align-items: center;
     position: relative;
     min-height: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select-simulado span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .select-simulado::after {
@@ -347,6 +366,19 @@ input:focus,
     border: 1px dashed var(--accent);
     line-height: 1.6;
     text-align: center;
+}
+
+.pix-code-display {
+    background: #f8f9fa;
+    border: 1px dashed #ced4da;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 10px;
+    word-break: break-all;
+    margin: 10px 0;
+    color: #495057;
+    text-align: left;
 }
 
 .btn-enviar {

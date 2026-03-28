@@ -47,8 +47,10 @@
                 <div class="campo">
                     <label>Data (Seg a Qui)</label>
                     <div class="input-container">
-                        <i class="mdi mdi-calendar"></i>
-                        <div id="data" class="select-simulado" data-value="">Selecione a data</div>
+                        <div id="data" class="select-simulado" data-value="">
+                            <i class="mdi mdi-calendar"></i>
+                            <span>Selecione a data</span>
+                        </div>
                         <div id="calendarPanel" class="calendar-panel">
                             <div class="calendar-header">
                                 <button type="button" onclick="mudarMes(-1); event.stopPropagation();"><i
@@ -64,8 +66,10 @@
                 <div class="campo">
                     <label>Hora (12h-21:30)</label>
                     <div class="input-container">
-                        <i class="mdi mdi-clock-outline"></i>
-                        <div id="horario" class="select-simulado" data-value="">Selecione a hora</div>
+                        <div id="horario" class="select-simulado" data-value="">
+                            <i class="mdi mdi-clock-outline"></i>
+                            <span>Selecione a hora</span>
+                        </div>
                         <div class="options-container">
                             <div class="option" data-value="12:00">12:00</div>
                             <div class="option" data-value="12:30">12:30</div>
@@ -95,8 +99,10 @@
             <div class="campo">
                 <label>Nº de Convidados (Mín. 10)</label>
                 <div class="input-container">
-                    <i class="mdi mdi-account-group"></i>
-                    <div id="pessoas" class="select-simulado" data-value="">Selecione</div>
+                    <div id="pessoas" class="select-simulado" data-value="">
+                        <i class="mdi mdi-account-group"></i>
+                        <span>Selecione</span>
+                    </div>
                     <div class="options-container">
                         <div class="option" data-value="10">10 pessoas</div>
                         <div class="option" data-value="11">11 pessoas</div>
@@ -116,8 +122,10 @@
             <div class="campo">
                 <label>Deseja Bolo?</label>
                 <div class="input-container">
-                    <i class="mdi mdi-cake-variant"></i>
-                    <div id="querBolo" class="select-simulado" data-value="nao">Não, apenas a mesa</div>
+                    <div id="querBolo" class="select-simulado" data-value="nao">
+                        <i class="mdi mdi-cake-variant"></i>
+                        <span>Não, apenas a mesa</span>
+                    </div>
                     <div class="options-container">
                         <div class="option" data-value="nao">Não, apenas a mesa</div>
                         <div class="option" data-value="sim">Sim, desejo o bolo cortesia 🎂</div>
@@ -131,8 +139,10 @@
                 <div class="campo">
                     <label>Sabor do Bolo</label>
                     <div class="input-container">
-                        <i class="mdi mdi-format-list-bulleted"></i>
-                        <div id="sabor" class="select-simulado" data-value="Brigadeiro">Brigadeiro</div>
+                        <div id="sabor" class="select-simulado" data-value="Brigadeiro">
+                            <i class="mdi mdi-format-list-bulleted"></i>
+                            <span>Brigadeiro</span>
+                        </div>
                         <div class="options-container">
                             <div class="option" data-value="Brigadeiro">Brigadeiro</div>
                             <div class="option" data-value="Brigadeiro Maracujá">Brigadeiro Maracujá</div>
@@ -156,11 +166,28 @@
                 <div id="detalhesFinanceiros" class="info-pagamento" style="display:none;">
                     <b>Total Excedente: R$ <span id="valorTotal">0,00</span></b><br>
                     <small>Sinal de 50% via PIX para quilos extras.</small>
+
+                    <div id="pixPagamento"
+                        style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                        <img id="qrCode"
+                            src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126510014br.gov.bcb.pix0114137919980001310211LORUSSOPROD5204000053039865802BR5914GERADOR%20DE%20PIX6009SAO%20PAULO62070503***6304F4F9"
+                            width="140"
+                            style="margin:10px auto; border: 4px solid #fff; border-radius: 10px; display:block;">
+                        <div class="pix-code-display" id="pixCopiaCola">
+                            00020126510014br.gov.bcb.pix0114137919980001310211LORUSSOPROD5204000053039865802BR5914GERADOR%20DE%20PIX6009SAO%20PAULO62070503***6304F4F9
+                        </div>
+                        <button type="button" onclick="copiarPix()"
+                            style="background:#f39c12; border:none; color:#fff; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%;">COPIAR
+                            PIX</button>
+                        <div id="valorInfo"
+                            style="margin: 10px 0; font-weight: bold; font-size: 14px; color:var(--primary); background: #eee; padding: 8px; border-radius: 5px;">
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <button type="button" id="btnEnviar" class="btn-enviar" onclick="enviarWhatsApp()" disabled>
-                <i class="mdi mdi-whatsapp"></i> CONCLUIR RESERVA
+                <i class="mdi mdi-whatsapp"></i> ENVIAR RESERVA
             </button>
         </form>
     </div>
