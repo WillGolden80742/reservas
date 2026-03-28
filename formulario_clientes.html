@@ -43,6 +43,15 @@
                 </div>
             </div>
 
+            <div class="campo">
+                <label>WhatsApp</label>
+                <div class="input-container">
+                    <i class="mdi mdi-whatsapp"></i>
+                    <input type="text" id="whatsapp" placeholder="(00) 00000-0000" maxlength="15" required
+                        oninput="maskPhone(this); validarFluxo()">
+                </div>
+            </div>
+
             <div class="grid-duplo">
                 <div class="campo">
                     <label>Data (Seg a Qui)</label>
@@ -54,10 +63,10 @@
                         <div id="calendarPanel" class="calendar-panel">
                             <div class="calendar-header">
                                 <button type="button" onclick="mudarMes(-1); event.stopPropagation();"><i
-                                        class="mdi mdi-chevron-left"></i></button>
+                                        class="mdi mdi-chevron-left left-arrow"></i></button>
                                 <span id="monthYearLabel"></span>
                                 <button type="button" onclick="mudarMes(1); event.stopPropagation();"><i
-                                        class="mdi mdi-chevron-right"></i></button>
+                                        class="mdi mdi-chevron-right right-arrow"></i></button>
                             </div>
                             <div class="calendar-grid"></div>
                         </div>

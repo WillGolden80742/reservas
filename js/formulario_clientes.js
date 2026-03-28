@@ -142,9 +142,29 @@ function mudarMes(delta) {
     renderCalendar();
 }
 
+function maskPhone(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value.length > 11) value = value.slice(0, 11);
+
+    if (value.length > 10) {
+        // (00) 00000-0000
+        input.value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+    } else if (value.length > 6) {
+        // (00) 0000-0000
+        input.value = `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6)}`;
+    } else if (value.length > 2) {
+        // (00) 0000
+        input.value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    } else if (value.length > 0) {
+        // (00)
+        input.value = `(${value}`;
+    }
+}
+
 // --- LÓGICA DE NEGÓCIO ---
 function validarFluxo() {
     const nome = document.getElementById('nome').value.trim();
+    const whatsapp = document.getElementById('whatsapp').value.trim();
     const dataVal = document.getElementById('data').getAttribute('data-value');
     const horaVal = document.getElementById('horario').getAttribute('data-value');
     const pessoas = document.getElementById('pessoas').getAttribute('data-value');
@@ -155,7 +175,7 @@ function validarFluxo() {
     const kg = parseFloat(kgInput ? kgInput.value : 1) || 1;
     const divFinanceiro = document.getElementById('detalhesFinanceiros');
 
-    let todosCamposPreenchidos = nome && dataVal && horaVal && pessoas;
+    let todosCamposPreenchidos = nome && (whatsapp.length >= 14) && dataVal && horaVal && pessoas;
 
     if (todosCamposPreenchidos) {
         btn.disabled = false;
@@ -191,6 +211,7 @@ function validarFluxo() {
 
 function enviarWhatsApp() {
     const nome = document.getElementById('nome').value.trim();
+    const whatsapp = document.getElementById('whatsapp').value.trim();
     const dataRaw = document.getElementById('data').getAttribute('data-value');
     const horario = document.getElementById('horario').getAttribute('data-value');
     const pessoas = document.getElementById('pessoas').getAttribute('data-value');
@@ -201,15 +222,15 @@ function enviarWhatsApp() {
     const d = new Date(dataRaw + 'T12:00:00');
     const dataBr = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-    let texto = `*RESERVA - NOSSA CARNE*\n\n👤 *Cliente:* ${nome}\n📅 *Data:* ${dataBr}\n⏰ *Hora:* ${horario}\n👥 *Pessoas:* ${pessoas}\n⚠️ _Ciente da taxa de rolha (R$40)._`;
+    let texto = `*RESERVA - NOSSA CARNE*\n\n*Cliente:* ${nome}\n*WhatsApp:* ${whatsapp}\n*Data:* ${dataBr}\n*Hora:* ${horario}\n*Pessoas:* ${pessoas}\n_Ciente da taxa de rolha (R$40)._`;
 
     if (querBolo === 'sim') {
         const kg = document.getElementById('kg').value;
         const sabor = document.getElementById('sabor').getAttribute('data-value') || "Não especificado";
         const excedente = Math.max(0, (kg - 1) * VALOR_KG);
 
-        texto += `\n\n🎂 *BOLO CORTESIA*\n🍰 *Sabor:* ${sabor}\n⚖️ *Peso:* ${kg}kg`;
-        if (excedente > 0) texto += `\n💰 *Excedente:* R$ ${excedente.toFixed(2)}`;
+        texto += `\n\n*BOLO CORTESIA*\n*Sabor:* ${sabor}\n*Peso:* ${kg}kg`;
+        if (excedente > 0) texto += `\n*Excedente:* R$ ${excedente.toFixed(2)}`;
     }
 
     window.open(`https://wa.me/${SEU_TELEFONE}?text=${encodeURIComponent(texto)}`, '_blank');

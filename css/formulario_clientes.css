@@ -123,6 +123,11 @@ label {
     justify-content: center;
 }
 
+.left-arrow,
+.right-arrow {
+    display: contents !important;
+}
+
 /* Ajuste específico para ícones dentro do select simulado */
 .select-simulado i {
     position: absolute;
