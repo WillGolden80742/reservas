@@ -800,22 +800,27 @@ input:checked+.slider:before {
     font-size: 15px;
 }
 
-/* Print Hide Hack */
+/* Print Styles */
 @media print {
-    body * {
-        visibility: hidden;
-    }
-
-    #print-modal,
-    #print-modal * {
-        visibility: visible;
+    body>*:not(#print-modal) {
+        display: none !important;
     }
 
     #print-modal {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
+        display: block !important;
+        position: relative !important;
+        visibility: visible !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 20px !important;
+        box-shadow: none !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Omit browser-added headers/footers if possible (often needs user setting, but margin: 0 helps) */
+    @page {
+        margin: 0;
     }
 }
 
@@ -880,6 +885,14 @@ input:checked+.slider:before {
 .settings-actions {
     margin-top: 30px;
     margin-bottom: 50px;
+}
+
+.reservation-indicator {
+    display: inline-block;
+    width: 65px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* Scrollbar Hide */

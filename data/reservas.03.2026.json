@@ -1,64 +1,16 @@
 [
   {
-    "id": "1",
-    "status": "Confirmado",
-    "type": "order",
-    "date": "2026-03-23",
-    "qtyPeople": null,
-    "phone": "5534234324234",
-    "name": "Teste33",
-    "time": "21:03",
-    "observations": null,
-    "isBirthday": false,
-    "courtesy": null,
-    "description": "21321312",
-    "createdAt": "2026-03-28T01:12:31.880Z",
-    "updatedAt": "2026-03-28T01:22:06.617Z"
-  },
-  {
-    "id": "1774661196558",
     "status": "Pendente",
-    "type": "reservation",
-    "date": "2026-04-07",
-    "qtyPeople": 10,
-    "phone": "5532432423423",
-    "name": "goldencross",
-    "time": "13:00",
-    "isBirthday": true,
-    "courtesy": "Brigadeiro",
-    "observations": "Pelo link público. Bolo: Sim.",
-    "createdAt": "2026-03-28T01:26:36.558Z"
-  },
-  {
-    "status": "Confirmado",
     "type": "reservation",
     "date": "2026-03-30",
     "qtyPeople": 12,
-    "phone": "5568768787678",
-    "name": "admin",
-    "time": "14:00",
-    "isBirthday": true,
-    "courtesy": "Brigadeiro",
-    "observations": "Pelo link público. Bolo: Sim.",
-    "id": "1774661723263",
-    "createdAt": "2026-03-28T01:35:23.263Z",
-    "description": null,
-    "updatedAt": "2026-03-28T01:35:42.260Z"
-  },
-  {
-    "status": "Pendente",
-    "type": "reservation",
-    "date": "2026-03-31",
-    "qtyPeople": 12,
-    "phone": "5555319999999",
+    "phone": "5523242423432",
     "name": "goldencross",
     "time": "13:30",
     "isBirthday": true,
     "courtesy": "Brigadeiro",
     "observations": "Pelo link público. Bolo: Sim.",
-    "id": "1774662272681",
-    "createdAt": "2026-03-28T01:44:32.681Z",
-    "description": null,
-    "updatedAt": "2026-03-28T02:06:59.666Z"
+    "id": "1774667452484",
+    "createdAt": "2026-03-28T03:10:52.484Z"
   }
 ]

@@ -604,42 +604,76 @@ function deleteItem(id, dateString) {
 }
 
 function printItem(id) {
+    console.log('[PRINT] Iniciando impressão para ID:', id);
+
     const itemToPrint = items.find(item => item.id == id);
+
     if (itemToPrint) {
+        console.log('[PRINT] Item encontrado:', itemToPrint);
+
         const formattedDate = getDisplayDate(itemToPrint.date);
-        const displayPhone = maskPhoneNumber(itemToPrint.phone.startsWith('55') ? itemToPrint.phone.substring(2) : itemToPrint.phone);
+        const displayPhone = maskPhoneNumber(
+            itemToPrint.phone.startsWith('55')
+                ? itemToPrint.phone.substring(2)
+                : itemToPrint.phone
+        );
 
         let printContent = `
-            <h1>Detalhes do Agendamento</h1>
-            <p><strong>Tipo:</strong> ${itemToPrint.type === 'reservation' ? 'Reserva' : 'Pedido'}</p>
-            <p><strong>Nome:</strong> ${itemToPrint.name}</p>
-            <p><strong>Telefone:</strong> ${displayPhone}</p>
-            <p><strong>Data:</strong> ${formattedDate}</p>
-            <p><strong>Horário:</strong> ${itemToPrint.time}</p>
+            <div class="print-header">
+                <h1>Detalhes do Agendamento</h1>
+                <p><strong>Tipo:</strong> ${itemToPrint.type === 'reservation' ? 'Reserva' : 'Pedido'}</p>
+            </div>
+            <div class="print-body">
+                <p><strong>Nome:</strong> ${itemToPrint.name}</p>
+                <p><strong>Telefone:</strong> ${displayPhone}</p>
+                <p><strong>Data:</strong> ${formattedDate}</p>
+                <p><strong>Horário:</strong> ${itemToPrint.time}</p>
         `;
 
         if (itemToPrint.type === 'reservation') {
             printContent += `<p><strong>Quantidade de Pessoas:</strong> ${itemToPrint.qtyPeople}</p>`;
+
             if (itemToPrint.observations) {
                 printContent += `<h2>Observações:</h2><p>${itemToPrint.observations.replace(/\n/g, '<br>')}</p>`;
             }
+
             if (itemToPrint.isBirthday) {
                 printContent += `<p><strong>Aniversariante:</strong> Sim</p>`;
                 if (itemToPrint.courtesy) {
                     printContent += `<p><strong>Cortesia:</strong> ${itemToPrint.courtesy}</p>`;
                 }
             }
+
         } else { // type === 'order'
-            printContent += `<h2>Detalhes do Pedido:</h2><p>${itemToPrint.description.replace(/\n/g, '<br>')}</p>`;
+            const description = itemToPrint.description || 'Sem descrição';
+            printContent += `<h2>Detalhes do Pedido:</h2><p>${description.replace(/\n/g, '<br>')}</p>`;
         }
 
+        printContent += `</div>`;
+
+        // Coloca o conteúdo no modal oculto
         DOM.printModal.innerHTML = printContent;
-        window.print();
+
+        // Garante que o modal esteja visível para o layout (o print.css cuidará do resto)
+        DOM.printModal.style.display = 'block';
+
+        console.log('[PRINT] Conteúdo inserido. Disparando window.print() em breve...');
+
+        // Pequeno delay para garantir renderização antes do diálogo de impressão aparecer
+        setTimeout(() => {
+            window.print();
+
+            // Oculta novamente após abrir o diálogo de impressão (não afeta o que já foi enviado ao spooler)
+            setTimeout(() => {
+                DOM.printModal.style.display = 'none';
+            }, 1000);
+        }, 150);
+
     } else {
+        console.error('[PRINT] ERRO: Item não encontrado para ID:', id);
         openModal(DOM.alertModalOverlay, 'Erro', 'Item não encontrado para impressão.', 'error');
     }
 }
-
 // --- Funções da Aba "Próximas Reservas" ---
 function renderUpcomingItems(filter = '') {
     DOM.upcomingListContainer.innerHTML = '';
