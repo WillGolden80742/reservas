@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1774658540459",
+    "status": "Pendente",
+    "type": "reservation",
+    "date": "2026-03-31",
+    "qtyPeople": 12,
+    "phone": "5555319999999",
+    "name": "admin",
+    "time": "14:00",
+    "isBirthday": true,
+    "courtesy": "Brigadeiro",
+    "observations": "Pelo link público. Bolo: Sim.",
+    "createdAt": "2026-03-28T00:42:20.460Z"
+  }
+]
