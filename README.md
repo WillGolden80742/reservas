@@ -1,136 +1,163 @@
-# ReservaPro - Gestão Inteligente de Agendamentos e Pedidos
+# ReservaPro - Sistema de Gestão de Agendamentos e Pedidos
 
-## Visão Geral do Projeto
+## Visão Geral
 
-ReservaPro é uma aplicação web intuitiva e eficiente para gerenciar agendamentos (reservas), pedidos e contatos de clientes. Inspirada na usabilidade de interfaces iOS, a aplicação oferece uma experiência de usuário fluida para administradores, facilitando a organização diária e a comunicação com os clientes.
+O ReservaPro é uma aplicação web intuitiva e eficiente projetada para otimizar o gerenciamento de agendamentos (reservas), pedidos e contatos de clientes para negócios. Inspirada na usabilidade de interfaces iOS, a aplicação oferece uma experiência de usuário fluida para administradores, facilitando a organização diária e a comunicação com os clientes.
 
-O projeto atual já implementa funcionalidades essenciais no frontend (HTML, CSS, JavaScript) usando armazenamento local (`localStorage`) para persistência de dados. A estrutura é projetada para ser facilmente escalável para um backend Node.js com banco de dados, conforme proposto nos requisitos adicionais.
+O projeto foi inicialmente desenvolvido com uma abordagem frontend-first, utilizando `localStorage` para persistência de dados. Agora, ele evoluiu para incluir um backend Node.js robusto com armazenamento de dados baseado em arquivos JSON, preparando-o para futuras integrações com bancos de dados reais.
 
-## Funcionalidades Atuais
+## Funcionalidades
 
-### Gerenciamento de Agendamentos/Pedidos
-*   **Visualização em Calendário:** Um calendário interativo permite visualizar rapidamente os dias com reservas ou pedidos.
-*   **Criação/Edição/Exclusão:** Formulários dedicados para adicionar novos agendamentos ou pedidos, além de funcionalidades para editar e excluir os existentes.
-*   **Detalhes Abrangentes:** Cada item pode conter nome do cliente, telefone, horário, quantidade de pessoas (para reservas), observações, se é aniversariante e qual cortesia (para reservas), ou descrição do pedido (para pedidos).
-*   **Próximas Reservas:** Uma lista organizada de reservas futuras, com busca por nome ou observação.
-*   **Pedidos Pendentes:** Uma lista organizada de pedidos futuros, com busca por nome ou descrição.
-*   **Impressão:** Geração de um resumo detalhado para impressão de agendamentos e pedidos individuais.
+### Frontend (Admin)
 
-### Gerenciamento de Contatos
-*   **Lista de Contatos:** Uma tela dedicada para gerenciar uma lista de contatos, com busca por nome ou telefone.
-*   **Criação/Edição/Exclusão:** Adicione, edite ou remova contatos com nome, telefone e notas.
-*   **Integração com Agendamentos/Pedidos:**
-    *   **Autocompletar:** Ao digitar no campo "Nome do Cliente" no formulário de agendamento/pedido, o sistema sugere contatos existentes.
-    *   **Pré-preenchimento:** Selecionar um contato da lista de sugestões preenche automaticamente o nome e telefone.
-    *   **Criar Agendamento/Pedido a Partir do Contato:** Botões rápidos na tela de contatos para iniciar um novo agendamento ou pedido pré-preenchido com os dados do contato.
-    *   **Salvar Contato no Formulário de Item:** Opção para salvar um cliente como novo contato diretamente do formulário de agendamento/pedido.
+O painel administrativo oferece um conjunto completo de ferramentas para gerenciar o fluxo de trabalho diário:
 
-### Gerenciamento de Cortesias
-*   **Lista de Cortesias:** Gerencie uma lista de opções de cortesia que podem ser associadas a reservas de aniversariantes.
-*   **Adicionar/Remover:** Adicione novas opções de cortesia dinamicamente.
-*   **Seleção no Formulário:** Selecione a cortesia no formulário de reserva quando o cliente for aniversariante.
-
-### Utilidades
-*   **Máscara de Telefone:** Campos de telefone com máscara `(##) #####-####` para facilitar a entrada de dados.
-*   **Links Diretos para WhatsApp:** Geração de links para iniciar conversas no WhatsApp com os clientes diretamente dos agendamentos/pedidos e contatos.
-*   **Alerta de Cache:** Notificação quando o armazenamento local está próximo de sua capacidade máxima.
-*   **Limpeza Automática de Cache:** Agendamentos/Pedidos mais antigos que um mês são automaticamente removidos do armazenamento local para otimização de espaço.
+*   **Autenticação de Administrador:** Acesso protegido por senha para garantir que apenas usuários autorizados possam gerenciar as informações.
+*   **Visualização em Calendário:** Um calendário interativo que destaca visualmente os dias com reservas ou pedidos, permitindo uma rápida visão geral da agenda.
+*   **Gerenciamento de Agendamentos/Pedidos (CRUD):**
+    *   **Criação/Edição/Exclusão:** Formulários dedicados para adicionar novos agendamentos ou pedidos, com opções para editar e remover itens existentes.
+    *   **Detalhes Abrangentes:** Cada item pode conter nome do cliente, telefone, horário, quantidade de pessoas (para reservas), observações, status (Confirmado/Pendente), se é aniversariante e qual cortesia (para reservas), ou descrição do pedido (para pedidos).
+    *   **Status de Agendamento:** Controle visual e funcional do status de cada agendamento/pedido.
+*   **Listas Organizadas:**
+    *   **Próximas Reservas:** Uma lista clara e concisa das reservas futuras, com funcionalidade de busca por nome ou observação.
+    *   **Pedidos Pendentes:** Uma lista dedicada a pedidos futuros, com busca por nome ou descrição.
+*   **Impressão:** Geração de um resumo detalhado e formatado para impressão de agendamentos e pedidos individuais.
+*   **Gerenciamento de Contatos:**
+    *   **Lista Completa:** Uma seção dedicada para gerenciar uma lista de contatos, com busca por nome ou telefone.
+    *   **CRUD de Contatos:** Adicione, edite ou remova contatos com nome, telefone e notas.
+    *   **Integração com Agendamentos/Pedidos:**
+        *   **Autocompletar Inteligente:** Sugestões de contatos existentes ao digitar no campo "Nome do Cliente" nos formulários de agendamento/pedido.
+        *   **Pré-preenchimento Automático:** Seleção de um contato da lista de sugestões preenche automaticamente o nome e telefone.
+        *   **Criação Rápida de Item:** Botões diretos na tela de contatos para iniciar um novo agendamento ou pedido, já pré-preenchido com os dados do contato.
+        *   **Salvar Contato:** Opção para salvar um cliente como novo contato diretamente do formulário de agendamento/pedido.
+*   **Gerenciamento de Cortesias:**
+    *   **Lista Customizável:** Gerencie uma lista de opções de cortesia que podem ser associadas a reservas de aniversariantes.
+    *   **Adicionar/Remover:** Adicione ou remova opções de cortesia dinamicamente.
+    *   **Seleção Flexível:** Selecione a cortesia no formulário de reserva, com opções de busca e adição de novas no modal.
+*   **Configurações do Negócio:**
+    *   Um painel de configurações permite ao administrador personalizar:
+        *   Dias e horários de funcionamento para reservas.
+        *   Quantidade mínima de pessoas para uma reserva.
+        *   Regras e opções de bolo cortesia.
+        *   Detalhes do PIX (chave, titular, cidade, preço por kg adicional).
+        *   Número de WhatsApp para contato do negócio.
 *   **Interface Responsiva:** Design otimizado para dispositivos móveis, com navegação por abas na parte inferior.
+
+### Frontend (Formulário de Cliente)
+
+*   **Formulário Público de Reserva/Pedido:** Uma interface simplificada e amigável para clientes realizarem solicitações de reserva ou pedido diretamente.
+*   **Validação de Entrada:** Validação em tempo real de campos como nome, WhatsApp, data, hora e quantidade de convidados.
+*   **Lógica de Bolo Cortesia:** Opção para o cliente solicitar bolo cortesia com seleção de sabor e cálculo de valor excedente para quilos adicionais, incluindo geração de QR Code e código PIX.
+*   **Envio via WhatsApp:** Integração para enviar os detalhes da reserva/pedido diretamente para o WhatsApp do negócio.
+
+### Backend (Node.js)
+
+O backend, construído com Express.js e Socket.io, gerencia a persistência dos dados e a comunicação em tempo real:
+
+*   **API RESTful:** Endpoints para todas as operações CRUD (`/api/items`, `/api/contacts`, `/api/courtesies`, `/api/settings`).
+*   **Autenticação:** Sistema de login para administradores usando `argon2` para hashing seguro de senhas.
+*   **Armazenamento de Dados:** Dados de agendamentos, contatos, cortesias e configurações são armazenados em arquivos JSON na pasta `data/`. Agendamentos são organizados por mês/ano.
+*   **Sincronização em Tempo Real:** Utiliza Socket.io para notificar todos os clientes (painéis administrativos) conectados sobre qualquer alteração nos dados (agendamentos, contatos, cortesias, configurações), garantindo que todos vejam as informações mais atualizadas instantaneamente.
+*   **Rotas Públicas:** `POST /api/items` permite que o formulário do cliente envie novas solicitações de agendamento/pedido.
 
 ## Estrutura do Projeto
 
 ```
 reservas/
-├── css/
-│   └── style.css           # Estilos globais e de componentes
-├── js/
-│   ├── script.js           # Lógica principal da aplicação (frontend)
-│   └── storage.js          # Funções de interação com localStorage e limpeza de cache
-├── index.html              # Estrutura principal da página
-└── README.md               # Este arquivo
+├── data/
+│   ├── contacts.json          # Armazenamento de contatos
+│   ├── courtesies.json        # Armazenamento de opções de cortesia
+│   ├── reservas.MM.YYYY.json  # Agendamentos e pedidos (um arquivo por mês/ano)
+│   └── settings.json          # Configurações gerais da aplicação
+├── public/
+│   ├── css/
+│   │   ├── formulario_clientes.css # Estilos do formulário público
+│   │   └── style.css           # Estilos do painel administrativo
+│   ├── js/
+│   │   ├── formulario_clientes.js  # Lógica do formulário público
+│   │   ├── script.js           # Lógica principal do painel administrativo
+│   │   └── storage.js          # Funções de interação com a API (frontend)
+│   ├── formulario_clientes.html# Formulário público para clientes
+│   └── index.html              # Painel administrativo
+├── server/
+│   ├── data_storage.js         # Funções para leitura/escrita de arquivos JSON
+│   └── index.js                # Servidor Express.js e WebSockets
+├── .gitattributes              # Configurações do Git LFS (se aplicável)
+├── .gitignore                  # Arquivos/diretórios a serem ignorados pelo Git
+├── package.json                # Metadados e dependências do projeto
+├── package-lock.json           # Lockfile de dependências
+└── README.md                   # Este arquivo
 ```
 
-## Como Usar (Versão Atual)
+## Tecnologias Utilizadas
 
-1.  Clone o repositório: `git clone https://github.com/WillGolden80742/reservas.git`
-2.  Navegue até o diretório do projeto: `cd reservas`
-3.  Abra o arquivo `index.html` em seu navegador.
+*   **Frontend:**
+    *   HTML5
+    *   CSS3 (com inspiração em Material Design Icons e iOS)
+    *   JavaScript Vanilla (com uso de ES6+)
+    *   [Material Design Icons](https://pictogrammers.com/library/mdi/)
+    *   [Google Fonts (Poppins, Montserrat)](https://fonts.google.com/)
+*   **Backend:**
+    *   [Node.js](https://nodejs.org/)
+    *   [Express.js](https://expressjs.com/) (Framework web)
+    *   [Socket.io](https://socket.io/) (WebSockets para comunicação em tempo real)
+    *   [Argon2](https://www.npmjs.com/package/argon2) (Para hashing seguro de senhas de administrador)
+    *   [fs.promises](https://nodejs.org/api/fs.html#fspromises) (Módulo nativo para operações assíncronas com arquivos)
 
-Os dados serão armazenados no `localStorage` do seu navegador.
+## Como Iniciar o Projeto
 
-## Próximos Passos (Propostas de Implementação)
+Para configurar e rodar o ReservaPro localmente:
 
----
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/WillGolden80742/reservas.git
+    cd reservas
+    ```
 
-## Propostas de Implementação para o Sistema de Agendamento, Pedidos e Contatos (Node.js)
+2.  **Instale as dependências do Node.js:**
+    ```bash
+    npm install
+    ```
 
-Para transformar o projeto atual em um sistema robusto com backend, propõe-se a implementação das seguintes funcionalidades utilizando Node.js e um banco de dados (ex: MongoDB, PostgreSQL ou MySQL).
+3.  **Inicie o servidor:**
+    *   Para iniciar em modo de produção:
+        ```bash
+        npm start
+        ```
+    *   Para iniciar em modo de desenvolvimento (com `nodemon` para restart automático):
+        ```bash
+        npm run dev
+        ```
+
+    O servidor será iniciado em `http://localhost:3000` (ou na porta definida pela variável de ambiente `PORT`).
+
+4.  **Acesse a aplicação:**
+    *   **Painel Administrativo:** Abra seu navegador e navegue para `http://localhost:3000/admin`.
+    *   **Formulário de Cliente:** Abra seu navegador e navegue para `http://localhost:3000/form`.
+
+### Acesso ao Painel Administrativo
+
+Ao acessar o painel administrativo pela primeira vez, você será solicitado a fazer login. A senha inicial para o administrador é gerenciada no arquivo `data/settings.json`. Você pode configurá-la diretamente lá (o valor padrão `$argon2id$v=19$m=65536,t=3,p=4$E49AAqhOAwfzDrxlwR+KdA$v1LY6SRnIT8xcvfv/zi+V9XJzgHA8zkM3t/+ywGlQQ0` corresponde a `admin_password_default`).
+
+**Importante:** Em um ambiente de produção real, é crucial usar variáveis de ambiente para senhas e chaves, e considerar um sistema de gerenciamento de usuários mais robusto, como o MongoDB com Mongoose, conforme proposto nos próximos passos.
+
+## Próximos Passos (Propostas de Implementação Futuras)
+
+Para levar o ReservaPro ao próximo nível, as seguintes propostas de implementação estão no roadmap, visando aprimorar a escalabilidade, segurança e funcionalidades:
 
 ### Requisitos Funcionais (RF)
 
 #### RF1: Gerenciamento de Agendamentos/Pedidos (Admin)
 
-*   **RF1.1: Criação de Agendamento/Pedido:**
-    *   **Status Inicial:** Novos agendamentos/pedidos criados pelo administrador terão status "Confirmado" por padrão.
-    *   **Backend:** Endpoint `POST /api/items` para criar um novo item.
-    *   **Validação:** Validação de dados de entrada no backend (formato de telefone, datas, horas, campos obrigatórios para cada tipo).
-*   **RF1.2: Visualização de Agendamentos/Pedidos:**
-    *   **Backend:** Endpoint `GET /api/items` com suporte a query parameters para filtros (data, tipo, status) e paginação.
-    *   **Frontend:** Interface atual será adaptada para buscar dados do backend.
-*   **RF1.3: Edição de Agendamento/Pedido:**
-    *   **Backend:** Endpoint `PUT /api/items/:id` para atualizar um item existente.
-    *   **Validação:** Validação rigorosa dos campos atualizados.
-*   **RF1.4: Exclusão de Agendamento/Pedido:**
-    *   **Backend:** Endpoint `DELETE /api/items/:id` para remover um item.
 *   **RF1.5: Aprovação/Recusa de Agendamento/Pedido:**
     *   **Backend:** Endpoint `PUT /api/items/:id/status` para alterar o status.
     *   **RF1.5.1: Justificativa de Recusa:** Campo `justification` obrigatório no payload da requisição `PUT` para recusa.
     *   **RF1.5.2: Notificação de Status ao Cliente (WhatsApp):**
         *   **Integração:** Implementação de uma integração com uma API de WhatsApp (ex: Twilio, Wati, ou biblioteca de Node.js para WhatsApp Web) para enviar mensagens programaticamente.
         *   **Lógica:** No backend, após a atualização do status, disparar a função de envio de mensagem com template customizado para "Confirmado" ou "Recusado" (incluindo a justificativa).
-*   **RF1.6: Geração de Link WhatsApp para Contato:**
-    *   **Frontend:** A lógica atual (`https://wa.me/${phone}`) permanecerá, mas o número de telefone virá do backend.
-*   **RF1.7: Impressão de Agendamento/Pedido:**
-    *   **Frontend:** A lógica atual para a modal de impressão será mantida, mas os dados serão puxados do backend.
-
-#### RF2: Gerenciamento de Contatos (Admin)
-
-*   **RF2.1: Criação de Contato:**
-    *   **Backend:** Endpoint `POST /api/contacts` para adicionar um novo contato.
-    *   **Validação:** Garantir telefone único (opcional, ou com tratamento para duplicados).
-*   **RF2.2: Visualização de Contatos:**
-    *   **Backend:** Endpoint `GET /api/contacts` com suporte a filtros por nome/telefone e paginação.
-    *   **Frontend:** A lista de contatos será populada com dados do backend.
-*   **RF2.3: Edição de Contato:**
-    *   **Backend:** Endpoint `PUT /api/contacts/:id` para atualizar um contato.
-*   **RF2.4: Exclusão de Contato:**
-    *   **Backend:** Endpoint `DELETE /api/contacts/:id` para remover um contato.
-    *   **Consideração:** Decidir se contatos com agendamentos/pedidos associados podem ser excluídos (soft delete ou bloqueio).
-*   **RF2.5: Associação de Contato a Agendamento/Pedido:**
-    *   **Backend:** Os IDs dos contatos serão armazenados nos documentos de agendamento/pedido para manter a referência.
-    *   **Frontend:** A funcionalidade de autocompletar e pré-preenchimento será adaptada para buscar/associar contatos do backend.
-
-#### RF3: Gerenciamento de Cortesias (Admin)
-
-*   **RF3.1: Criação de Cortesia:**
-    *   **Backend:** Endpoint `POST /api/courtesies` para adicionar uma nova cortesia.
-*   **RF3.2: Visualização de Cortesias:**
-    *   **Backend:** Endpoint `GET /api/courtesies` para listar todas as cortesias.
-    *   **Frontend:** A lista de opções na modal de item será populada com dados do backend.
-*   **RF3.3: Edição de Cortesia:**
-    *   **Backend:** Endpoint `PUT /api/courtesies/:id` para atualizar o nome de uma cortesia.
-*   **RF3.4: Exclusão de Cortesia:**
-    *   **Backend:** Endpoint `DELETE /api/courtesies/:id` para remover uma cortesia.
-    *   **Consideração:** Decidir como lidar com cortesias já associadas a agendamentos (desvinculação, ou remoção do nome da cortesia do agendamento).
 
 #### RF4: Funcionalidades de Cliente (Link Público)
 
-*   **RF4.1: Formulário de Reserva/Pedido:**
-    *   **Frontend (Público):** Criação de uma interface HTML/CSS/JS separada ou rota pública no Node.js que renderize um formulário simplificado.
-    *   **Backend:** Endpoint `POST /public/submit` para receber submissões de clientes.
-    *   **RF4.1.1: Escolha de Tipo:** Formulário com seleção clara de "Reserva" ou "Pedido".
-    *   **RF4.1.2: Dados do Cliente:** Campos para nome, telefone (com máscara), data, hora, etc.
-    *   **RF4.1.3: Validação de Campos:** Validação tanto no frontend quanto no backend.
 *   **RF4.2: Notificação de Submissão (WhatsApp - Cliente):**
     *   **Backend:** Após receber a submissão, *tentar* enviar uma mensagem de confirmação inicial via API de WhatsApp para o cliente.
     *   **Modelo de Mensagem:** "Olá [Nome], seu agendamento/pedido para [Data] às [Hora] foi recebido e está aguardando confirmação. Em breve entraremos em contato!"
@@ -144,17 +171,23 @@ Para transformar o projeto atual em um sistema robusto com backend, propõe-se a
 #### RF5: Autenticação e Autorização (Admin)
 
 *   **RF5.1: Login de Administrador:**
-    *   **Backend:** Implementação de estratégias de autenticação (ex: JWT - JSON Web Tokens) com endpoints `POST /auth/login`.
+    *   **Backend:** Implementação de estratégias de autenticação (ex: JWT - JSON Web Tokens) com endpoints `POST /auth/login`. (Parcialmente implementado, mas JWT para sessões persistentes é um próximo passo).
     *   **Frontend:** Uma tela de login dedicada para administradores.
 *   **RF5.2: Proteção de Rotas Admin:**
     *   **Backend:** Middleware de autenticação para proteger todas as rotas `/api/*`.
     *   **Autorização:** Possibilidade de implementar diferentes níveis de usuário, se necessário (ex: `admin`, `editor`).
 
-### Tecnologias Propostas (Node.js Backend)
+### Melhorias de Arquitetura e Escala
 
-*   **Framework:** Express.js
-*   **Banco de Dados:** MongoDB (com Mongoose ODM), PostgreSQL ou MySQL (com Sequelize ORM)
-*   **Autenticação:** JWT (JSON Web Tokens), bcrypt para hash de senhas
-*   **Validação:** Joi ou Express-validator
-*   **Integração WhatsApp:** Uma biblioteca ou serviço de API de WhatsApp (ex: `whatsapp-web.js` para WhatsApp Web, ou APIs comerciais como Twilio/Wati para integração mais robusta e oficial).
-*   **Estrutura:** Separação em rotas, controladores, serviços/modelos.
+*   **Banco de Dados Real:** Migrar o armazenamento de dados de arquivos JSON para um banco de dados relacional (PostgreSQL, MySQL com Sequelize ORM) ou NoSQL (MongoDB com Mongoose ODM) para maior escalabilidade, robustez e capacidade de consulta.
+*   **Validação Robusta:** Implementar bibliotecas de validação no backend (Joi ou Express-validator) para garantir a integridade dos dados.
+*   **Variáveis de Ambiente:** Utilizar `dotenv` para gerenciar variáveis de ambiente, especialmente para senhas e chaves de API, aumentando a segurança.
+*   **Modularização do Backend:** Refatorar o backend em uma estrutura mais modular (rotas, controladores, serviços/modelos) para melhor organização e manutenção.
+
+## Contribuição
+
+Contribuições são sempre bem-vindas! Se você tiver sugestões, relatórios de bugs ou quiser implementar novas funcionalidades, sinta-se à vontade para abrir uma issue ou enviar um pull request.
+
+## Licença
+
+Este projeto está licenciado sob a licença ISC.
