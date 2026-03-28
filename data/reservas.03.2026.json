@@ -1,0 +1,16 @@
+[
+  {
+    "status": "Pendente",
+    "type": "reservation",
+    "date": "2026-03-30",
+    "qtyPeople": 12,
+    "phone": "5523242423432",
+    "name": "goldencross",
+    "time": "13:30",
+    "isBirthday": true,
+    "courtesy": "Brigadeiro",
+    "observations": "Pelo link público. Bolo: Sim.",
+    "id": "1774667452484",
+    "createdAt": "2026-03-28T03:10:52.484Z"
+  }
+]
