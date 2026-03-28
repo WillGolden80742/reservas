@@ -67,6 +67,28 @@ const DOM = {
     noContactsMessage: document.getElementById('no-contacts-message'), // NEW
     addContactButtonMain: document.getElementById('add-contact-button-main'), // NEW
 
+    settingsView: document.getElementById('settings-view'),
+    settingsTab: document.getElementById('settingsTab'),
+    settingsForm: document.getElementById('settings-form'),
+    settingsDaysInput: document.getElementById('settings-days'),
+    settingsHoursInput: document.getElementById('settings-hours'),
+    settingsMinPeopleInput: document.getElementById('settings-min-people'),
+    settingsCourtesyRuleInput: document.getElementById('settings-courtesy-rule'),
+    settingsCourtesyOptionsContainer: document.getElementById('settings-courtesy-options'),
+    settingsPixKeyInput: document.getElementById('settings-pix-key'),
+    settingsPixOwnerInput: document.getElementById('settings-pix-owner'),
+    settingsPixCityInput: document.getElementById('settings-pix-city'),
+    settingsPricePerKgInput: document.getElementById('settings-price-per-kg'),
+    settingsWhatsappInput: document.getElementById('settings-whatsapp'),
+    newTagInput: document.getElementById('new-tag-input'),
+    addTagButton: document.getElementById('add-tag-button'),
+    saveSettingsButton: document.getElementById('save-settings-button'),
+
+    loginOverlay: document.getElementById('login-overlay'),
+    loginForm: document.getElementById('login-form'),
+    adminPasswordInput: document.getElementById('admin-password'),
+    loginError: document.getElementById('login-error'),
+
     contactFormModalOverlay: document.getElementById('contact-form-modal-overlay'), // NEW
     contactModalTitle: document.getElementById('contact-modal-title'), // NEW
     closeContactModalBtn: document.getElementById('close-contact-modal'), // NEW
@@ -94,6 +116,7 @@ let selectedCourtesy = null;
 let items = [];
 let courtesies = [];
 let contacts = []; // NEW: Array para armazenar contatos
+let currentSettings = {};
 
 // --- Funções de Utilidade de Data ---
 function getFormattedDate(date) {
@@ -993,11 +1016,13 @@ function showView(viewId) {
     DOM.upcomingItemsView.style.display = 'none';
     DOM.ordersView.style.display = 'none';
     DOM.contactsView.style.display = 'none'; // NEW
+    DOM.settingsView.style.display = 'none';
 
     DOM.calendarTab.classList.remove('active');
     DOM.upcomingItemsTab.classList.remove('active');
     DOM.ordersTab.classList.remove('active');
     DOM.contactsTab.classList.remove('active'); // NEW
+    DOM.settingsTab.classList.remove('active');
 
     const selectedView = document.getElementById(viewId);
     selectedView.style.display = 'block';
@@ -1014,7 +1039,43 @@ function showView(viewId) {
     } else if (viewId === 'contacts-view') { // NEW
         DOM.contactsTab.classList.add('active');
         renderContacts(DOM.contactsSearchInput.value); // Render contacts with current filter
+    } else if (viewId === 'settings-view') {
+        DOM.settingsTab.classList.add('active');
+        renderSettings();
     }
+}
+
+// --- Funções de Settings ---
+async function renderSettings() {
+    currentSettings = await loadSettingsApi();
+    if (!currentSettings) return;
+
+    DOM.settingsDaysInput.value = currentSettings.schedules.days.join(', ');
+    DOM.settingsHoursInput.value = currentSettings.schedules.hours.join(', ');
+    DOM.settingsMinPeopleInput.value = currentSettings.schedules.minPeople;
+    DOM.settingsCourtesyRuleInput.value = currentSettings.courtesies.rule;
+    DOM.settingsPixKeyInput.value = currentSettings.pix.key;
+    DOM.settingsPixOwnerInput.value = currentSettings.pix.owner;
+    DOM.settingsPixCityInput.value = currentSettings.pix.city;
+    DOM.settingsPricePerKgInput.value = currentSettings.pix.pricePerKg;
+    DOM.settingsWhatsappInput.value = currentSettings.whatsappNumber || '';
+
+    renderCourtesyTags();
+}
+
+function renderCourtesyTags() {
+    DOM.settingsCourtesyOptionsContainer.innerHTML = '';
+    currentSettings.courtesies.options.forEach(option => {
+        const tag = document.createElement('div');
+        tag.classList.add('tag');
+        tag.innerHTML = `${option} <span class="mdi mdi-close" data-option="${option}"></span>`;
+        tag.querySelector('.mdi-close').addEventListener('click', (e) => {
+            const opt = e.target.dataset.option;
+            currentSettings.courtesies.options = currentSettings.courtesies.options.filter(o => o !== opt);
+            renderCourtesyTags();
+        });
+        DOM.settingsCourtesyOptionsContainer.appendChild(tag);
+    });
 }
 
 // --- Event Listeners ---
@@ -1068,6 +1129,65 @@ document.addEventListener('DOMContentLoaded', async () => {
     DOM.upcomingItemsTab.addEventListener('click', () => showView('upcoming-items-view'));
     DOM.ordersTab.addEventListener('click', () => showView('orders-view'));
     DOM.contactsTab.addEventListener('click', () => showView('contacts-view')); // NEW
+    DOM.settingsTab.addEventListener('click', () => showView('settings-view'));
+
+    DOM.loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password = DOM.adminPasswordInput.value;
+        const success = await loginApi(password);
+        if (success) {
+            DOM.loginOverlay.classList.remove('visible');
+            DOM.app.style.display = 'block';
+            sessionStorage.setItem('admin_auth', 'true');
+        } else {
+            DOM.loginError.style.display = 'block';
+        }
+    });
+
+    if (sessionStorage.getItem('admin_auth') === 'true') {
+        DOM.loginOverlay.classList.remove('visible');
+        DOM.app.style.display = 'block';
+    }
+
+    DOM.addTagButton.addEventListener('click', () => {
+        const val = DOM.newTagInput.value.trim();
+        if (val && !currentSettings.courtesies.options.includes(val)) {
+            currentSettings.courtesies.options.push(val);
+            renderCourtesyTags();
+            DOM.newTagInput.value = '';
+        }
+    });
+
+    DOM.settingsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const updatedSettings = {
+            schedules: {
+                days: DOM.settingsDaysInput.value.split(',').map(s => s.trim()),
+                hours: DOM.settingsHoursInput.value.split(',').map(s => s.trim()),
+                minPeople: parseInt(DOM.settingsMinPeopleInput.value)
+            },
+            courtesies: {
+                rule: DOM.settingsCourtesyRuleInput.value,
+                options: currentSettings.courtesies.options
+            },
+            pix: {
+                key: DOM.settingsPixKeyInput.value,
+                owner: DOM.settingsPixOwnerInput.value,
+                city: DOM.settingsPixCityInput.value,
+                pricePerKg: parseFloat(DOM.settingsPricePerKgInput.value)
+            },
+            whatsappNumber: DOM.settingsWhatsappInput.value.trim()
+        };
+
+        try {
+            await saveSettingsApi(updatedSettings);
+            openModal(DOM.alertModalOverlay, 'Sucesso!', 'Configurações salvas com sucesso!', 'success');
+            courtesies = updatedSettings.courtesies.options; // Sync old local array
+            renderCourtesyOptions();
+        } catch (error) {
+            openModal(DOM.alertModalOverlay, 'Erro', 'Não foi possível salvar as configurações.', 'error');
+        }
+    });
 
     // NEW: Event listener for main "Add Contact" button
     DOM.addContactButtonMain.addEventListener('click', () => {

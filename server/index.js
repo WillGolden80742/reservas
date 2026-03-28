@@ -151,7 +151,53 @@ app.post('/api/courtesies', async (req, res) => {
     }
 });
 
+// RF4: Settings
+app.get('/api/settings', async (req, res) => {
+    try {
+        const settings = await require('./data_storage').readSettings();
+        // Don't send the password to the client unless authenticated
+        const { adminPassword, ...publicSettings } = settings;
+        res.json(publicSettings);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.post('/api/settings', async (req, res) => {
+    try {
+        const currentSettings = await require('./data_storage').readSettings();
+        const newSettings = { ...currentSettings, ...req.body };
+        await require('./data_storage').writeSettings(newSettings);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+// Admin Login
+app.post('/api/login', async (req, res) => {
+    const { password } = req.body;
+    const settings = await require('./data_storage').readSettings();
+    if (password === settings.adminPassword) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ error: 'Invalid password' });
+    }
+});
+
 // Serve frontend
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+app.get('/form', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'formulario_clientes.html'));
+});
+
+app.get('/', (req, res) => {
+    res.redirect('/form');
+});
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });

@@ -27,11 +27,8 @@
             <h2>Reserva Nossa Carne</h2>
         </div>
 
-        <div class="regras-box">
-            • <b>Dias:</b> Somente Segunda a Quinta.<br>
-            • <b>Horário:</b> 12:00 às 21:30.<br>
-            • <b>Convidados:</b> Mínimo de 10 pessoas.<br>
-            • <b>Cortesia:</b> 1kg Grátis (Válido para 10+ pessoas).
+        <div class="regras-box" id="regras-box">
+            Carregando regras...
         </div>
 
         <form id="reservaForm">
@@ -79,27 +76,8 @@
                             <i class="mdi mdi-clock-outline"></i>
                             <span>Selecione a hora</span>
                         </div>
-                        <div class="options-container">
-                            <div class="option" data-value="12:00">12:00</div>
-                            <div class="option" data-value="12:30">12:30</div>
-                            <div class="option" data-value="13:00">13:00</div>
-                            <div class="option" data-value="13:30">13:30</div>
-                            <div class="option" data-value="14:00">14:00</div>
-                            <div class="option" data-value="14:30">14:30</div>
-                            <div class="option" data-value="15:00">15:00</div>
-                            <div class="option" data-value="15:30">15:30</div>
-                            <div class="option" data-value="16:00">16:00</div>
-                            <div class="option" data-value="16:30">16:30</div>
-                            <div class="option" data-value="17:00">17:00</div>
-                            <div class="option" data-value="17:30">17:30</div>
-                            <div class="option" data-value="18:00">18:00</div>
-                            <div class="option" data-value="18:30">18:30</div>
-                            <div class="option" data-value="19:00">19:00</div>
-                            <div class="option" data-value="19:30">19:30</div>
-                            <div class="option" data-value="20:00">20:00</div>
-                            <div class="option" data-value="20:30">20:30</div>
-                            <div class="option" data-value="21:00">21:00</div>
-                            <div class="option" data-value="21:30">21:30</div>
+                        <div class="options-container" id="horario-options">
+                            <!-- Populated via JS -->
                         </div>
                     </div>
                 </div>
@@ -112,15 +90,10 @@
                         <i class="mdi mdi-account-group"></i>
                         <span>Selecione</span>
                     </div>
-                    <div class="options-container">
+                    <div class="options-container" id="pessoas-options">
                         <div class="option" data-value="10">10 pessoas</div>
-                        <div class="option" data-value="11">11 pessoas</div>
-                        <div class="option" data-value="12">12 pessoas</div>
-                        <div class="option" data-value="13">13 pessoas</div>
-                        <div class="option" data-value="14">14 pessoas</div>
                         <div class="option" data-value="15">15 pessoas</div>
                         <div class="option" data-value="20">20 pessoas</div>
-                        <div class="option" data-value="25">25 pessoas</div>
                         <div class="option" data-value="30">30 pessoas</div>
                         <div class="option" data-value="40">40 pessoas</div>
                         <div class="option" data-value="50">50 pessoas</div>
@@ -152,14 +125,8 @@
                             <i class="mdi mdi-format-list-bulleted"></i>
                             <span>Brigadeiro</span>
                         </div>
-                        <div class="options-container">
-                            <div class="option" data-value="Brigadeiro">Brigadeiro</div>
-                            <div class="option" data-value="Brigadeiro Maracujá">Brigadeiro Maracujá</div>
-                            <div class="option" data-value="Ninho com Nutella">Ninho com Nutella</div>
-                            <div class="option" data-value="Ninho com Morango">Ninho com Morango</div>
-                            <div class="option" data-value="Ninho com Abacaxi">Ninho com Abacaxi</div>
-                            <div class="option" data-value="Mousse de Chocolate">Mousse de Chocolate</div>
-                            <div class="option" data-value="Prestígio">Prestígio</div>
+                        <div class="options-container" id="sabor-options">
+                            <!-- Populated via JS -->
                         </div>
                     </div>
                 </div>

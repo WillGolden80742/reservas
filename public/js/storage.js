@@ -140,5 +140,45 @@ window.loadItems = async (month, year) => {
     await loadCourtesiesApi();
 }
 
+async function loadSettingsApi() {
+    try {
+        const response = await fetch(`${API_URL}/settings`);
+        if (!response.ok) throw new Error('Failed to fetch settings');
+        return await response.json();
+    } catch (e) {
+        console.error("Erro ao carregar configurações da API:", e);
+        return null;
+    }
+}
+
+async function saveSettingsApi(settings) {
+    try {
+        const response = await fetch(`${API_URL}/settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        });
+        if (!response.ok) throw new Error('Failed to save settings');
+        return await response.json();
+    } catch (e) {
+        console.error("Erro ao salvar configurações via API:", e);
+        throw e;
+    }
+}
+
+async function loginApi(password) {
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+        return response.ok;
+    } catch (e) {
+        console.error("Erro ao fazer login:", e);
+        return false;
+    }
+}
+
 function checkLocalStorageCapacity() { }
 function cleanOldItems() { }

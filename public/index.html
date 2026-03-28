@@ -17,7 +17,26 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="login-overlay" class="modal-overlay visible">
+        <div class="modal-content login-modal">
+            <div class="header" style="text-align: center; margin-bottom: 20px;">
+                <img src="https://static.ifood-static.com.br/image/upload/t_high/logosgde/ef733dfb-3edf-42ef-9aea-9a87b00dcbdc/202510141310_BXc1_i.png"
+                    alt="Nossa Carne" style="width: 80px; margin-bottom: 10px;">
+                <h2>Acesso Restrito</h2>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="admin-password">Senha de Acesso:</label>
+                    <input type="password" id="admin-password" required placeholder="Digite a senha...">
+                </div>
+                <button type="submit" class="primary-button" id="login-button">Entrar</button>
+            </form>
+            <p id="login-error" style="color: #e74c3c; text-align: center; margin-top: 10px; display: none;">Senha
+                incorreta!</p>
+        </div>
+    </div>
+
+    <div id="app" style="display: none;">
         <header>
             <h1>Agendamentos</h1>
         </header>
@@ -84,6 +103,76 @@
                     <p id="no-contacts-message">Nenhum contato salvo.</p>
                 </div>
             </section>
+
+            <!-- Settings View -->
+            <section id="settings-view" class="content-view" style="display: none;">
+                <h2>Configurações do Negócio</h2>
+                <form id="settings-form">
+                    <div class="settings-section">
+                        <h3><span class="mdi mdi-clock-outline"></span> Horários e Regras</h3>
+                        <div class="form-group">
+                            <label for="settings-days">Dias de Funcionamento (separados por vírgula):</label>
+                            <input type="text" id="settings-days" placeholder="Segunda, Terça, Quarta, Quinta">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-hours">Horários Disponíveis (separados por vírgula):</label>
+                            <textarea id="settings-hours" placeholder="12:00, 12:30, 13:00..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-min-people">Mínimo de Pessoas para Reserva:</label>
+                            <input type="number" id="settings-min-people" min="1">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3><span class="mdi mdi-cake-variant"></span> Cortesias</h3>
+                        <div class="form-group">
+                            <label for="settings-courtesy-rule">Regra da Cortesia:</label>
+                            <input type="text" id="settings-courtesy-rule"
+                                placeholder="1kg Grátis (Válido para 10+ pessoas)">
+                        </div>
+                        <div class="form-group">
+                            <label>Opções de Bolo (Cortesias):</label>
+                            <div id="settings-courtesy-options" class="tag-container">
+                                <!-- Tags will be added here -->
+                            </div>
+                            <div class="input-with-button">
+                                <input type="text" id="new-tag-input" placeholder="Novo sabor...">
+                                <button type="button" id="add-tag-button" class="secondary-button">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3><span class="mdi mdi-currency-usd"></span> Pagamento e PIX</h3>
+                        <div class="form-group">
+                            <label for="settings-pix-key">Chave PIX:</label>
+                            <input type="text" id="settings-pix-key">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-pix-owner">Nome do Titular:</label>
+                            <input type="text" id="settings-pix-owner">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-pix-city">Cidade:</label>
+                            <input type="text" id="settings-pix-city">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-price-per-kg">Preço por Kg Adicional (R$):</label>
+                            <input type="number" id="settings-price-per-kg" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-whatsapp">WhatsApp para Recebimento (55 + DDD + Número):</label>
+                            <input type="text" id="settings-whatsapp" placeholder="Ex: 5511999999999">
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button type="submit" class="primary-button" id="save-settings-button">Salvar
+                            Configurações</button>
+                    </div>
+                </form>
+            </section>
         </main>
     </div>
 
@@ -103,6 +192,10 @@
         <button id="contactsTab" class="tab-button">
             <span class="mdi mdi-account-box-multiple"></span>
             <span>Contatos</span>
+        </button>
+        <button id="settingsTab" class="tab-button">
+            <span class="mdi mdi-cog"></span>
+            <span>Ajustes</span>
         </button>
     </nav>
 
