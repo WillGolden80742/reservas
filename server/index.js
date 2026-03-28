@@ -27,13 +27,13 @@ const saveMonthData = async (data, date = new Date()) => {
 app.post('/api/items', async (req, res) => {
     try {
         const newItem = {
-            id: Date.now().toString(),
             status: 'Confirmado',
             ...req.body,
+            id: Date.now().toString(), // Ensure ID is generated and not overwritten
             createdAt: new Date().toISOString()
         };
 
-        const date = new Date(newItem.data || new Date());
+        const date = new Date(newItem.date || new Date()); // Use 'date' instead of 'data'
         const data = await getMonthData(date);
         data.push(newItem);
         await saveMonthData(data, date);
@@ -62,7 +62,7 @@ app.get('/api/items', async (req, res) => {
 app.put('/api/items/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { data: itemDate } = req.body;
+        const { date: itemDate } = req.body; // Use 'date' instead of 'data'
         const date = new Date(itemDate || new Date());
         const data = await getMonthData(date);
 
@@ -115,7 +115,10 @@ app.get('/api/contacts', async (req, res) => {
 app.post('/api/contacts', async (req, res) => {
     try {
         const data = await require('./data_storage').readContacts();
-        const newContact = { id: Date.now().toString(), ...req.body };
+        const newContact = {
+            ...req.body,
+            id: Date.now().toString()
+        };
         data.push(newContact);
         await require('./data_storage').writeContacts(data);
         res.status(201).json(newContact);
