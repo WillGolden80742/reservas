@@ -33,7 +33,13 @@ app.post('/api/items', async (req, res) => {
             createdAt: new Date().toISOString()
         };
 
-        const date = new Date(newItem.date || new Date()); // Use 'date' instead of 'data'
+        let date;
+        if (newItem.date) {
+            const [year, month, day] = newItem.date.split('-').map(Number);
+            date = new Date(year, month - 1, day);
+        } else {
+            date = new Date();
+        }
         const data = await getMonthData(date);
         data.push(newItem);
         await saveMonthData(data, date);
@@ -63,7 +69,13 @@ app.put('/api/items/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { date: itemDate } = req.body; // Use 'date' instead of 'data'
-        const date = new Date(itemDate || new Date());
+        let date;
+        if (itemDate) {
+            const [year, month, day] = itemDate.split('-').map(Number);
+            date = new Date(year, month - 1, day);
+        } else {
+            date = new Date();
+        }
         const data = await getMonthData(date);
 
         const index = data.findIndex(item => item.id === id);
@@ -86,7 +98,13 @@ app.delete('/api/items/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { date: rawDate } = req.query; // Expecting date in query for context
-        const date = rawDate ? new Date(rawDate) : new Date();
+        let date;
+        if (rawDate) {
+            const [year, month, day] = rawDate.split('-').map(Number);
+            date = new Date(year, month - 1, day);
+        } else {
+            date = new Date();
+        }
         const data = await getMonthData(date);
 
         const filteredData = data.filter(item => item.id !== id);

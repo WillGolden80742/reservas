@@ -219,7 +219,7 @@ function updateUIWithSettings() {
         const minPessoas = settings.schedules.minPeople || 1;
         let pOpts = '';
         // Gerar sugestões baseadas no mínimo e em números comuns
-        const baseSugestoes = [2, 5, 10, 15, 20, 25, 30, 40, 50];
+        const baseSugestoes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50];
         const sugestoes = [minPessoas];
         baseSugestoes.forEach(n => {
             if (n > minPessoas && !sugestoes.includes(n)) sugestoes.push(n);
@@ -366,6 +366,12 @@ async function enviarWhatsApp() {
             status: 'Pendente'
         };
 
+        // Loading state
+        const btn = document.getElementById('btnEnviar');
+        const originalBtnText = btn.innerHTML;
+        btn.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> ENVIANDO...';
+        btn.disabled = true;
+
         const response = await fetch('/api/items', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -373,10 +379,25 @@ async function enviarWhatsApp() {
         });
 
         if (!response.ok) {
-            console.error('Falha ao salvar no servidor');
+            throw new Error('Falha ao salvar no servidor');
         }
+
+        // Restore button or show success if needed
+        btn.innerHTML = '<i class="mdi mdi-check"></i> RESERVA REGISTRADA!';
+        btn.style.backgroundColor = "#27ae60";
+
+        setTimeout(() => {
+            btn.innerHTML = originalBtnText;
+            btn.style.backgroundColor = "";
+            btn.disabled = false;
+        }, 3000);
+
     } catch (error) {
         console.error('Erro ao conectar com o servidor:', error);
+        alert('Houve um erro ao registrar sua reserva, mas você pode continuar pelo WhatsApp.');
+        const btn = document.getElementById('btnEnviar');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="mdi mdi-whatsapp"></i> ENVIAR RESERVA';
     }
 
     let texto = `*RESERVA - NOSSA CARNE*\n\n*Cliente:* ${nome}\n*WhatsApp:* ${whatsapp}\n*Data:* ${dataBr}\n*Hora:* ${horario}\n*Pessoas:* ${pessoas}\n_Ciente da taxa de rolha (R$40)._`;

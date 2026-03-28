@@ -323,6 +323,33 @@ main {
     color: var(--secondary-text);
 }
 
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.status-pendente {
+    background-color: #FFF7EB;
+    color: var(--accent-orange);
+    border: 0.5px solid var(--accent-orange);
+}
+
+.status-confirmado {
+    background-color: #E8F8EF;
+    color: var(--accent-green);
+    border: 0.5px solid var(--accent-green);
+}
+
+.pending-indicator {
+    background-color: var(--accent-orange) !important;
+}
+
 .upcoming-item-actions,
 .item-actions,
 .contact-actions {

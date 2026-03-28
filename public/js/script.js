@@ -24,6 +24,7 @@ const DOM = {
     formTitle: document.getElementById('form-title'),
     itemIdInput: document.getElementById('item-id'),
     itemTypeSelect: document.getElementById('item-type'),
+    statusSelect: document.getElementById('item-status'),
     // NEW: Contact search in item modal integrated into name input
     contactSearchResults: document.getElementById('contact-search-results'),
     phoneInput: document.getElementById('phone'),
@@ -245,6 +246,10 @@ function renderCalendar() {
             dayDiv.classList.add('has-reservation');
             const reservationIndicator = document.createElement('div');
             reservationIndicator.classList.add('reservation-indicator');
+            // Show orange for pending, green for others
+            if (reservationsForDay.some(r => r.status === 'Pendente')) {
+                reservationIndicator.classList.add('pending-indicator');
+            }
             reservationIndicator.textContent = reservationsForDay[0].name;
             dayDiv.appendChild(reservationIndicator);
         }
@@ -252,6 +257,9 @@ function renderCalendar() {
             dayDiv.classList.add('has-order');
             const orderIndicator = document.createElement('div');
             orderIndicator.classList.add('order-indicator');
+            if (ordersForDay.some(r => r.status === 'Pendente')) {
+                orderIndicator.classList.add('pending-indicator');
+            }
             orderIndicator.textContent = ordersForDay[0].name;
             dayDiv.appendChild(orderIndicator);
         }
@@ -319,11 +327,13 @@ function renderExistingItems(dateString) {
 
             const displayPhone = maskPhoneNumber(item.phone.startsWith('55') ? item.phone.substring(2) : item.phone);
             const whatsappLink = `https://wa.me/${item.phone}`;
+            const statusClass = item.status === 'Pendente' ? 'status-pendente' : 'status-confirmado';
+            const statusLabel = item.status || 'Confirmado';
 
             let itemDetailsHTML = '';
             if (item.type === 'reservation') {
                 itemDetailsHTML = `
-                    <p class="time">${item.time} - Reserva</p>
+                    <p class="time">${item.time} - Reserva <span class="status-badge ${statusClass}">${statusLabel}</span></p>
                     <p class="name">${item.name} (${item.qtyPeople} pessoas)</p>
                     <p class="phone">${displayPhone}</p>
                     ${item.observations ? `<p class="observations">Obs: ${item.observations.substring(0, 50)}${item.observations.length > 50 ? '...' : ''}</p>` : ''}
@@ -331,7 +341,7 @@ function renderExistingItems(dateString) {
                 `;
             } else { // type === 'order'
                 itemDetailsHTML = `
-                    <p class="time">${item.time} - Pedido</p>
+                    <p class="time">${item.time} - Pedido <span class="status-badge ${statusClass}">${statusLabel}</span></p>
                     <p class="name">${item.name}</p>
                     <p class="phone">${displayPhone}</p>
                     <p class="description">${item.description.substring(0, 50)}${item.description.length > 50 ? '...' : ''}</p>
@@ -382,6 +392,7 @@ function resetItemForm() {
     DOM.itemForm.reset();
     DOM.itemIdInput.value = '';
     DOM.qtyPeopleInput.value = 1;
+    DOM.statusSelect.value = 'Confirmado';
     DOM.itemTypeSelect.value = 'reservation'; // Padrão para reserva
     DOM.observationsInput.value = ''; // Clear observations
     DOM.isBirthdayCheckbox.checked = false; // Uncheck birthday checkbox
@@ -542,6 +553,7 @@ function editItem(id) {
     const itemToEdit = items.find(item => item.id == id);
     if (itemToEdit) {
         DOM.itemIdInput.value = itemToEdit.id;
+        DOM.statusSelect.value = itemToEdit.status || 'Confirmado';
         DOM.itemTypeSelect.value = itemToEdit.type;
         toggleItemFields();
 
@@ -687,9 +699,11 @@ function renderUpcomingItems(filter = '') {
 
         const displayPhone = maskPhoneNumber(item.phone.startsWith('55') ? item.phone.substring(2) : item.phone);
         const whatsappLink = `https://wa.me/${item.phone}`;
+        const statusClass = item.status === 'Pendente' ? 'status-pendente' : 'status-confirmado';
+        const statusLabel = item.status || 'Confirmado';
 
         let itemDetailsHTML = `
-            <p class="time">${item.time} - Reserva</p>
+            <p class="time">${item.time} - Reserva <span class="status-badge ${statusClass}">${statusLabel}</span></p>
             <p class="name-qty">${item.name} (${item.qtyPeople} pessoas)</p>
             <p class="phone">${displayPhone}</p>
             ${item.observations ? `<p class="observations">Obs: ${item.observations.substring(0, 70)}${item.observations.length > 70 ? '...' : ''}</p>` : ''}
@@ -801,10 +815,12 @@ function renderOrdersList(filter = '') {
 
         const displayPhone = maskPhoneNumber(order.phone.startsWith('55') ? order.phone.substring(2) : order.phone);
         const whatsappLink = `https://wa.me/${order.phone}`;
+        const statusClass = order.status === 'Pendente' ? 'status-pendente' : 'status-confirmado';
+        const statusLabel = order.status || 'Confirmado';
 
         orderElement.innerHTML = `
             <div class="upcoming-item-details">
-                <p class="time">${order.time} - Pedido</p>
+                <p class="time">${order.time} - Pedido <span class="status-badge ${statusClass}">${statusLabel}</span></p>
                 <p class="name-qty">${order.name}</p>
                 <p class="phone">${displayPhone}</p>
                 <p class="description">${order.description.substring(0, 70)}${order.description.length > 70 ? '...' : ''}</p>
@@ -1302,6 +1318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const date = getFormattedDate(selectedDate);
         const itemId = DOM.itemIdInput.value;
+        const status = DOM.statusSelect.value;
         const type = DOM.itemTypeSelect.value;
 
         let rawPhone = DOM.phoneInput.value.replace(/\D/g, '');
@@ -1368,6 +1385,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             isBirthday: isBirthday,
             courtesy: isBirthday ? courtesy : null,
             description: description,
+            status: status
         };
 
         try {
