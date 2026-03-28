@@ -100,7 +100,7 @@ async function readSettings() {
                 pricePerKg: 95
             },
             whatsappNumber: '5511967105333',
-            adminPassword: 'admin' // Default password
+            adminPassword: '$argon2i$v=19$m=16,t=2,p=1$MzQ1MzQ1NDM0NjM$aJ7QPnIqQmEDZ23WWa0rPA' // Hash for 'argon' or similar
         };
         await fs.writeFile(filePath, JSON.stringify(defaultSettings, null, 2));
     }

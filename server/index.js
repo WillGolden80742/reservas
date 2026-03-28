@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs').promises;
 const { readData, writeData } = require('./data_storage');
+const argon2 = require('argon2');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -176,12 +177,20 @@ app.post('/api/settings', async (req, res) => {
 
 // Admin Login
 app.post('/api/login', async (req, res) => {
-    const { password } = req.body;
-    const settings = await require('./data_storage').readSettings();
-    if (password === settings.adminPassword) {
-        res.json({ success: true });
-    } else {
-        res.status(401).json({ error: 'Invalid password' });
+    try {
+        const { password } = req.body;
+        const settings = await require('./data_storage').readSettings();
+
+        const isMatch = await argon2.verify(settings.adminPassword, password);
+
+        if (isMatch) {
+            res.json({ success: true });
+        } else {
+            res.status(401).json({ error: 'Invalid password' });
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Authentication failed' });
     }
 });
 
