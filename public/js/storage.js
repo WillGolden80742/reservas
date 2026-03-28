@@ -7,10 +7,37 @@ let contacts = [];
 let courtesies = [];
 let currentSettings = {};
 
+// --- Auth Helpers ---
+function getAuthToken() {
+    return localStorage.getItem('admin_token');
+}
+
+function setAuthToken(token) {
+    if (token) {
+        localStorage.setItem('admin_token', token);
+    } else {
+        localStorage.removeItem('admin_token');
+    }
+}
+
+function getAuthHeaders() {
+    const token = getAuthToken();
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+    };
+}
+
 // --- Funções de API ---
 async function loadItemsApi(month, year) {
     try {
-        const response = await fetch(`${API_URL}/items?month=${month}&year=${year}`);
+        const response = await fetch(`${API_URL}/items?month=${month}&year=${year}`, {
+            headers: getAuthHeaders()
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return;
+        }
         if (!response.ok) throw new Error('Failed to fetch items');
         items = await response.json();
     } catch (e) {
@@ -21,7 +48,13 @@ async function loadItemsApi(month, year) {
 
 async function loadAllItemsApi() {
     try {
-        const response = await fetch(`${API_URL}/items/all`);
+        const response = await fetch(`${API_URL}/items/all`, {
+            headers: getAuthHeaders()
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return [];
+        }
         if (!response.ok) throw new Error('Failed to fetch items');
         return await response.json();
     } catch (e) {
@@ -32,7 +65,13 @@ async function loadAllItemsApi() {
 
 async function loadContactsApi() {
     try {
-        const response = await fetch(`${API_URL}/contacts`);
+        const response = await fetch(`${API_URL}/contacts`, {
+            headers: getAuthHeaders()
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return;
+        }
         if (!response.ok) throw new Error('Failed to fetch contacts');
         contacts = await response.json();
     } catch (e) {
@@ -43,7 +82,13 @@ async function loadContactsApi() {
 
 async function loadCourtesiesApi() {
     try {
-        const response = await fetch(`${API_URL}/courtesies`);
+        const response = await fetch(`${API_URL}/courtesies`, {
+            headers: getAuthHeaders()
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return;
+        }
         if (!response.ok) throw new Error('Failed to fetch courtesies');
         courtesies = await response.json();
     } catch (e) {
@@ -59,9 +104,14 @@ async function saveItem(item) {
 
         const response = await fetch(url, {
             method: method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders(),
             body: JSON.stringify(item)
         });
+
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            throw new Error('Unauthorized');
+        }
 
         if (!response.ok) throw new Error('Failed to save item');
 
@@ -74,10 +124,7 @@ async function saveItem(item) {
         if (item.id) {
             const index = items.findIndex(i => i.id === item.id);
             if (index !== -1) items[index] = savedItem;
-            // Otherwise, we don't know if we should add it (depends if user is viewing that month)
         } else {
-            // Check if it belongs in the current viewed items (approximate check by comparing month/year)
-            // But usually post happens on a specific day in the grid, so it's always relevant
             items.push(savedItem);
         }
 
@@ -91,8 +138,14 @@ async function saveItem(item) {
 async function deleteItemApi(id, date) {
     try {
         const response = await fetch(`${API_URL}/items/${id}?date=${date}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
+
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return;
+        }
 
         if (!response.ok) throw new Error('Failed to delete item');
 
@@ -108,9 +161,13 @@ async function saveContactApi(contact) {
     try {
         const response = await fetch(`${API_URL}/contacts`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders(),
             body: JSON.stringify(contact)
         });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return;
+        }
         if (!response.ok) throw new Error('Failed');
         const saved = await response.json();
         contacts.push(saved);
@@ -124,7 +181,7 @@ async function saveCourtesiesApi() {
     try {
         await fetch(`${API_URL}/courtesies`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders(),
             body: JSON.stringify(courtesies)
         });
     } catch (e) {
@@ -135,14 +192,14 @@ async function saveCourtesiesApi() {
 // Rename to avoid confusion but keep the signature for script.js
 function saveItems() {
     saveCourtesiesApi();
-    saveContactsApiSync(); // We need a sync-ish way if script.js Expects it to be fast, or we make script.js async
+    saveContactsApiSync();
 }
 
 async function saveContactsApiSync() {
     try {
         await fetch(`${API_URL}/contacts`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders(),
             body: JSON.stringify(contacts)
         });
     } catch (e) {
@@ -150,18 +207,15 @@ async function saveContactsApiSync() {
     }
 }
 
-function loadItemsLegacy() {
-    // This is a bridge for script.js
-    const now = new Date();
-    loadItemsApi(now.getMonth() + 1, now.getFullYear());
-    loadContactsApi();
-    loadCourtesiesApi();
+function handleAuthError() {
+    localStorage.removeItem('admin_token');
+    window.location.reload(); // Redirects to login overlay
 }
 
-// Rename loadItems to loadItemsApi in this file and export loadItems for script.js
+// Bridge for script.js
 window.loadItems = async (month, year) => {
     await loadItemsApi(month, year);
-    allItems = await loadAllItemsApi(); // Populate allItems for tabs
+    allItems = await loadAllItemsApi();
     await loadContactsApi();
     await loadCourtesiesApi();
 }
@@ -174,12 +228,16 @@ window.saveItem = saveItem;
 window.deleteItemApi = deleteItemApi;
 window.saveSettingsApi = saveSettingsApi;
 window.loginApi = loginApi;
+window.logout = () => {
+    setAuthToken(null);
+    window.location.reload();
+};
 window.saveContactApi = saveContactApi;
 window.saveItems = saveItems;
 
 async function loadSettingsApi() {
     try {
-        const response = await fetch(`${API_URL}/settings`);
+        const response = await fetch(`${API_URL}/settings`); // Keep public for form
         if (!response.ok) throw new Error('Failed to fetch settings');
         return await response.json();
     } catch (e) {
@@ -192,9 +250,13 @@ async function saveSettingsApi(settings) {
     try {
         const response = await fetch(`${API_URL}/settings`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders(),
             body: JSON.stringify(settings)
         });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return;
+        }
         if (!response.ok) throw new Error('Failed to save settings');
         return await response.json();
     } catch (e) {
@@ -210,7 +272,12 @@ async function loginApi(password) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password })
         });
-        return response.ok;
+        if (response.ok) {
+            const data = await response.json();
+            setAuthToken(data.token);
+            return true;
+        }
+        return false;
     } catch (e) {
         console.error("Erro ao fazer login:", e);
         return false;

@@ -109,6 +109,7 @@ const DOM = {
     closeCacheAlertModalBtn: document.getElementById('close-cache-alert-modal'), // NEW
 
     printModal: document.getElementById('print-modal'),
+    logoutBtn: document.getElementById('logout-button'),
 };
 
 let currentMonth = new Date();
@@ -1126,15 +1127,30 @@ function renderCourtesyTags() {
 }
 
 // --- Event Listeners ---
+async function initApp() {
+    try {
+        await loadItems(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+        renderCalendar();
+        renderUpcomingItems();
+        renderOrdersList();
+        renderContacts();
+        renderCourtesyOptions();
+    } catch (e) {
+        console.error("App initialization failed:", e);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadItems(currentMonth.getMonth() + 1, currentMonth.getFullYear());
-    // cleanOldItems(); // Backend handles persistence now
-    renderCalendar();
-    renderUpcomingItems();
-    renderOrdersList();
-    renderContacts(); // NEW
     toggleItemFields();
-    renderCourtesyOptions();
+
+    if (localStorage.getItem('admin_token')) {
+        DOM.loginOverlay.classList.remove('visible');
+        DOM.app.style.display = 'block';
+        await initApp();
+    } else {
+        DOM.loginOverlay.classList.add('visible');
+        DOM.app.style.display = 'none';
+    }
 
     DOM.prevMonthBtn.addEventListener('click', () => changeMonth(-1));
     DOM.nextMonthBtn.addEventListener('click', () => changeMonth(1));
@@ -1185,16 +1201,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (success) {
             DOM.loginOverlay.classList.remove('visible');
             DOM.app.style.display = 'block';
-            sessionStorage.setItem('admin_auth', 'true');
+            await initApp();
         } else {
             DOM.loginError.style.display = 'block';
         }
     });
-
-    if (sessionStorage.getItem('admin_auth') === 'true') {
-        DOM.loginOverlay.classList.remove('visible');
-        DOM.app.style.display = 'block';
-    }
 
     DOM.addTagButton.addEventListener('click', () => {
         const val = DOM.newTagInput.value.trim();
@@ -1470,4 +1481,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderSettings();
         }
     });
+
+    if (DOM.logoutBtn) {
+        DOM.logoutBtn.addEventListener('click', () => {
+            logout(); // From storage.js
+        });
+    }
 });

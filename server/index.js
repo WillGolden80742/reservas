@@ -7,6 +7,24 @@ const argon2 = require('argon2');
 const http = require('http');
 const { Server } = require('socket.io');
 
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'nosso_carne_secret_key_2024';
+
+// Middleware to authenticate JWT
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) return res.status(401).json({ error: 'Token required' });
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Invalid token' });
+        req.user = user;
+        next();
+    });
+};
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -72,7 +90,7 @@ app.post('/api/items', async (req, res) => {
 });
 
 // RF1.2: Get Reservations/Items
-app.get('/api/items', async (req, res) => {
+app.get('/api/items', authenticateToken, async (req, res) => {
     try {
         const { month, year } = req.query;
         const targetDate = (month && year) ? new Date(year, month - 1) : new Date();
@@ -91,7 +109,7 @@ app.get('/api/items', async (req, res) => {
 });
 
 // New Endpoint: Get all items across all months
-app.get('/api/items/all', async (req, res) => {
+app.get('/api/items/all', authenticateToken, async (req, res) => {
     try {
         const data = await require('./data_storage').readAllData();
         res.json(data);
@@ -102,7 +120,7 @@ app.get('/api/items/all', async (req, res) => {
 });
 
 // RF1.3: Update Reservation/Item
-app.put('/api/items/:id', async (req, res) => {
+app.put('/api/items/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { date: itemDate } = req.body; // Use 'date' instead of 'data'
@@ -134,7 +152,7 @@ app.put('/api/items/:id', async (req, res) => {
 });
 
 // RF1.4: Delete Reservation/Item
-app.delete('/api/items/:id', async (req, res) => {
+app.delete('/api/items/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { date: rawDate } = req.query; // Expecting date in query for context
@@ -165,7 +183,7 @@ app.delete('/api/items/:id', async (req, res) => {
 });
 
 // RF2: Contacts
-app.get('/api/contacts', async (req, res) => {
+app.get('/api/contacts', authenticateToken, async (req, res) => {
     try {
         const data = await require('./data_storage').readContacts();
         res.json(data);
@@ -174,7 +192,7 @@ app.get('/api/contacts', async (req, res) => {
     }
 });
 
-app.post('/api/contacts', async (req, res) => {
+app.post('/api/contacts', authenticateToken, async (req, res) => {
     try {
         const data = await require('./data_storage').readContacts();
         const newContact = {
@@ -193,7 +211,7 @@ app.post('/api/contacts', async (req, res) => {
     }
 });
 
-app.put('/api/contacts', async (req, res) => {
+app.put('/api/contacts', authenticateToken, async (req, res) => {
     try {
         await require('./data_storage').writeContacts(req.body);
 
@@ -207,7 +225,7 @@ app.put('/api/contacts', async (req, res) => {
 });
 
 // RF3: Courtesies
-app.get('/api/courtesies', async (req, res) => {
+app.get('/api/courtesies', authenticateToken, async (req, res) => {
     try {
         const data = await require('./data_storage').readCourtesies();
         res.json(data);
@@ -216,7 +234,7 @@ app.get('/api/courtesies', async (req, res) => {
     }
 });
 
-app.post('/api/courtesies', async (req, res) => {
+app.post('/api/courtesies', authenticateToken, async (req, res) => {
     try {
         await require('./data_storage').writeCourtesies(req.body);
 
@@ -241,7 +259,7 @@ app.get('/api/settings', async (req, res) => {
     }
 });
 
-app.post('/api/settings', async (req, res) => {
+app.post('/api/settings', authenticateToken, async (req, res) => {
     try {
         const currentSettings = await require('./data_storage').readSettings();
         const newSettings = { ...currentSettings, ...req.body };
@@ -265,9 +283,10 @@ app.post('/api/login', async (req, res) => {
         const isMatch = await argon2.verify(settings.adminPassword, password);
 
         if (isMatch) {
-            res.json({ success: true });
+            const token = jwt.sign({ admin: true }, JWT_SECRET, { expiresIn: '8h' });
+            res.json({ success: true, token });
         } else {
-            res.status(401).json({ error: 'Invalid password' });
+            res.status(401).json({ error: 'Senha incorreta!' });
         }
     } catch (error) {
         console.error('Login error:', error);
