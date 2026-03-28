@@ -14,26 +14,17 @@ function getFilePath(date = new Date()) {
 }
 
 /**
- * Ensure the file exists.
- * @param {string} filePath 
- */
-async function ensureFileExists(filePath) {
-    try {
-        await fs.access(filePath);
-    } catch {
-        await fs.writeFile(filePath, JSON.stringify([], null, 2));
-    }
-}
-
-/**
  * Read all data for a specific date.
  * @param {Date} date 
  */
 async function readData(date = new Date()) {
     const filePath = getFilePath(date);
-    await ensureFileExists(filePath);
-    const data = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(data);
+    try {
+        const data = await fs.readFile(filePath, 'utf-8');
+        return JSON.parse(data || '[]');
+    } catch {
+        return [];
+    }
 }
 
 /**
@@ -43,7 +34,39 @@ async function readData(date = new Date()) {
  */
 async function writeData(data, date = new Date()) {
     const filePath = getFilePath(date);
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    if (!data || data.length === 0) {
+        try {
+            await fs.unlink(filePath);
+        } catch (e) {
+            // Ignore error if file doesn't exist
+        }
+    } else {
+        await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    }
+}
+
+/**
+ * Read all data from all monthly reservation files.
+ */
+async function readAllData() {
+    try {
+        const files = await fs.readdir(DATA_DIR);
+        const reservaFiles = files.filter(f => f.startsWith('reservas.') && f.endsWith('.json'));
+        let allItems = [];
+        for (const file of reservaFiles) {
+            try {
+                const content = await fs.readFile(path.join(DATA_DIR, file), 'utf-8');
+                const items = JSON.parse(content || '[]');
+                allItems = allItems.concat(items);
+            } catch (e) {
+                console.error(`Error reading file ${file}:`, e);
+            }
+        }
+        return allItems;
+    } catch (e) {
+        console.error('Error reading all data:', e);
+        return [];
+    }
 }
 
 async function readContacts() {
@@ -116,6 +139,7 @@ async function writeSettings(data) {
 module.exports = {
     readData,
     writeData,
+    readAllData, // Add this
     readContacts,
     writeContacts,
     readCourtesies,

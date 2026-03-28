@@ -77,10 +77,27 @@ app.get('/api/items', async (req, res) => {
         const { month, year } = req.query;
         const targetDate = (month && year) ? new Date(year, month - 1) : new Date();
         const data = await getMonthData(targetDate);
+
+        // If the month is empty, ensure the file is deleted (cleanup unused JSON)
+        if (data.length === 0) {
+            await saveMonthData([], targetDate);
+        }
+
         res.json(data);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to fetch items' });
+    }
+});
+
+// New Endpoint: Get all items across all months
+app.get('/api/items/all', async (req, res) => {
+    try {
+        const data = await require('./data_storage').readAllData();
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed' });
     }
 });
 

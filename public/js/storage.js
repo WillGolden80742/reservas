@@ -1,5 +1,12 @@
 const API_URL = '/api';
 
+// Globais para armazenamento de estado (compartilhadas entre scripts)
+let items = [];
+let allItems = [];
+let contacts = [];
+let courtesies = [];
+let currentSettings = {};
+
 // --- Funções de API ---
 async function loadItemsApi(month, year) {
     try {
@@ -9,6 +16,17 @@ async function loadItemsApi(month, year) {
     } catch (e) {
         console.error("Erro ao carregar dados da API:", e);
         items = [];
+    }
+}
+
+async function loadAllItemsApi() {
+    try {
+        const response = await fetch(`${API_URL}/items/all`);
+        if (!response.ok) throw new Error('Failed to fetch items');
+        return await response.json();
+    } catch (e) {
+        console.error("Erro ao carregar todos os dados da API:", e);
+        return [];
     }
 }
 
@@ -49,11 +67,17 @@ async function saveItem(item) {
 
         const savedItem = await response.json();
 
-        // Update local items array
+        // Refresh allItems for tabs
+        allItems = await loadAllItemsApi();
+
+        // Update current viewed items if appropriate
         if (item.id) {
             const index = items.findIndex(i => i.id === item.id);
             if (index !== -1) items[index] = savedItem;
+            // Otherwise, we don't know if we should add it (depends if user is viewing that month)
         } else {
+            // Check if it belongs in the current viewed items (approximate check by comparing month/year)
+            // But usually post happens on a specific day in the grid, so it's always relevant
             items.push(savedItem);
         }
 
@@ -73,6 +97,7 @@ async function deleteItemApi(id, date) {
         if (!response.ok) throw new Error('Failed to delete item');
 
         items = items.filter(item => item.id !== id);
+        allItems = await loadAllItemsApi();
     } catch (e) {
         console.error("Erro ao deletar item via API:", e);
         throw e;
@@ -136,6 +161,7 @@ function loadItemsLegacy() {
 // Rename loadItems to loadItemsApi in this file and export loadItems for script.js
 window.loadItems = async (month, year) => {
     await loadItemsApi(month, year);
+    allItems = await loadAllItemsApi(); // Populate allItems for tabs
     await loadContactsApi();
     await loadCourtesiesApi();
 }
@@ -143,6 +169,7 @@ window.loadItems = async (month, year) => {
 window.loadContactsApi = loadContactsApi;
 window.loadCourtesiesApi = loadCourtesiesApi;
 window.loadSettingsApi = loadSettingsApi;
+window.loadAllItemsApi = loadAllItemsApi;
 window.saveItem = saveItem;
 window.deleteItemApi = deleteItemApi;
 window.saveSettingsApi = saveSettingsApi;

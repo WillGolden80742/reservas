@@ -114,10 +114,7 @@ const DOM = {
 let currentMonth = new Date();
 let selectedDate = null;
 let selectedCourtesy = null;
-let items = [];
-let courtesies = [];
-let contacts = []; // NEW: Array para armazenar contatos
-let currentSettings = {};
+// Os itens (items, allItems, contacts, courtesies, currentSettings) são declarados em storage.js
 
 // --- Funções de Utilidade de Data ---
 function getFormattedDate(date) {
@@ -682,7 +679,7 @@ function renderUpcomingItems(filter = '') {
     today.setHours(0, 0, 0, 0);
     const todayFormatted = getFormattedDate(today);
 
-    const upcomingReservations = items
+    const upcomingReservations = allItems
         .filter(item => {
             const matchesType = item.type === 'reservation' && item.date >= todayFormatted;
             if (!matchesType) return false;
@@ -797,7 +794,7 @@ function renderOrdersList(filter = '') {
     today.setHours(0, 0, 0, 0);
     const todayFormatted = getFormattedDate(today);
 
-    const pendingOrders = items
+    const pendingOrders = allItems
         .filter(item => {
             const matchesType = item.type === 'order' && item.date >= todayFormatted;
             if (!matchesType) return false;
