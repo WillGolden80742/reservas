@@ -91,12 +91,7 @@
                         <span>Selecione</span>
                     </div>
                     <div class="options-container" id="pessoas-options">
-                        <div class="option" data-value="10">10 pessoas</div>
-                        <div class="option" data-value="15">15 pessoas</div>
-                        <div class="option" data-value="20">20 pessoas</div>
-                        <div class="option" data-value="30">30 pessoas</div>
-                        <div class="option" data-value="40">40 pessoas</div>
-                        <div class="option" data-value="50">50 pessoas</div>
+                        <!-- Populated via JS -->
                     </div>
                 </div>
             </div>
@@ -106,9 +101,9 @@
                 <div class="input-container">
                     <div id="querBolo" class="select-simulado" data-value="nao">
                         <i class="mdi mdi-cake-variant"></i>
-                        <span>Não, apenas a mesa</span>
+                        <span>Selecione uma opção</span>
                     </div>
-                    <div class="options-container">
+                    <div class="options-container" id="querBolo-options">
                         <div class="option" data-value="nao">Não, apenas a mesa</div>
                         <div class="option" data-value="sim">Sim, desejo o bolo cortesia 🎂</div>
                     </div>
@@ -121,9 +116,9 @@
                 <div class="campo">
                     <label>Sabor do Bolo</label>
                     <div class="input-container">
-                        <div id="sabor" class="select-simulado" data-value="Brigadeiro">
+                        <div id="sabor" class="select-simulado" data-value="">
                             <i class="mdi mdi-format-list-bulleted"></i>
-                            <span>Brigadeiro</span>
+                            <span>Selecione o sabor</span>
                         </div>
                         <div class="options-container" id="sabor-options">
                             <!-- Populated via JS -->
@@ -132,7 +127,7 @@
                 </div>
 
                 <div class="campo">
-                    <label>Quilos (R$ 95 por kg adicional)</label>
+                    <label id="label-kg">Quilos (Sinal para kg adicional)</label>
                     <div class="input-container">
                         <i class="mdi mdi-weight-kilogram"></i>
                         <input type="number" id="kg" min="1" value="1" oninput="validarFluxo()">
@@ -145,12 +140,10 @@
 
                     <div id="pixPagamento"
                         style="display:none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                        <img id="qrCode"
-                            src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126510014br.gov.bcb.pix0114137919980001310211LORUSSOPROD5204000053039865802BR5914GERADOR%20DE%20PIX6009SAO%20PAULO62070503***6304F4F9"
-                            width="140"
+                        <img id="qrCode" src="" width="140"
                             style="margin:10px auto; border: 4px solid #fff; border-radius: 10px; display:block;">
                         <div class="pix-code-display" id="pixCopiaCola">
-                            00020126510014br.gov.bcb.pix0114137919980001310211LORUSSOPROD5204000053039865802BR5914GERADOR%20DE%20PIX6009SAO%20PAULO62070503***6304F4F9
+                            <!-- Populated via JS -->
                         </div>
                         <button type="button" onclick="copiarPix()"
                             style="background:#f39c12; border:none; color:#fff; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%;">COPIAR

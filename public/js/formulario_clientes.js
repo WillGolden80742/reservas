@@ -213,6 +213,28 @@ function updateUIWithSettings() {
         }
     }
 
+    // Atualizar Número de Pessoas
+    const pessoasOptionsContainer = document.getElementById('pessoas-options');
+    if (pessoasOptionsContainer) {
+        const minPessoas = settings.schedules.minPeople || 1;
+        let pOpts = '';
+        // Gerar sugestões baseadas no mínimo e em números comuns
+        const baseSugestoes = [2, 5, 10, 15, 20, 25, 30, 40, 50];
+        const sugestoes = [minPessoas];
+        baseSugestoes.forEach(n => {
+            if (n > minPessoas && !sugestoes.includes(n)) sugestoes.push(n);
+        });
+        sugestoes.sort((a, b) => a - b);
+
+        pessoasOptionsContainer.innerHTML = sugestoes.map(n => `<div class="option" data-value="${n}">${n} ${n === 1 ? 'pessoa' : 'pessoas'}</div>`).join('');
+    }
+
+    // Atualizar Label de Preço Kg
+    const labelKg = document.getElementById('label-kg');
+    if (labelKg && settings.pix.pricePerKg) {
+        labelKg.innerHTML = `Quilos (R$ ${settings.pix.pricePerKg.toFixed(2)} por kg adicional)`;
+    }
+
     // Re-init custom selects for new options
     initCustomSelects();
 }
@@ -271,12 +293,49 @@ function validarFluxo() {
     }
 }
 
-// Helper para gerar Payload PIX (Simplificado)
-function generatePixPayload(key, owner, city, amount) {
-    const amountStr = amount.toFixed(2);
-    // Isto é um gerador de payload PIX estático simulado, no mundo real usaria uma lib ou API
-    // Mas para manter a compatibilidade com o que estava lá:
-    return `00020126510014br.gov.bcb.pix0114${key}52040000530398654${amountStr.length.toString().padStart(2, '0')}${amountStr}5802BR59${owner.length.toString().padStart(2, '0')}${owner}60${city.length.toString().padStart(2, '0')}${city}62070503***6304`;
+// Helper para gerar Payload PIX (BR Code / EMV)
+function format(id, value) {
+    const size = value.length.toString().padStart(2, '0');
+    return id + size + value;
+}
+
+// CRC16 padrão Pix
+function crc16(str) {
+    let crc = 0xFFFF;
+    for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+            if ((crc & 0x8000) !== 0) {
+                crc = (crc << 1) ^ 0x1021;
+            } else {
+                crc <<= 1;
+            }
+        }
+    }
+    crc &= 0xFFFF;
+    return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
+function generatePixPayload(chave, nome, cidade, valor) {
+    const payload =
+        format("00", "01") +
+        format("26",
+            format("00", "br.gov.bcb.pix") +
+            format("01", chave)
+        ) +
+        format("52", "0000") +
+        format("53", "986") +
+        format("54", valor.toFixed(2)) +
+        format("58", "BR") +
+        format("59", nome.toUpperCase().substring(0, 25)) +
+        format("60", cidade.toUpperCase().substring(0, 15)) +
+        format("62",
+            format("05", "***")
+        ) +
+        "6304"; // CRC placeholder
+
+    const crc = crc16(payload);
+    return payload + crc;
 }
 
 async function enviarWhatsApp() {
