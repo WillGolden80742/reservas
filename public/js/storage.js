@@ -140,6 +140,16 @@ window.loadItems = async (month, year) => {
     await loadCourtesiesApi();
 }
 
+window.loadContactsApi = loadContactsApi;
+window.loadCourtesiesApi = loadCourtesiesApi;
+window.loadSettingsApi = loadSettingsApi;
+window.saveItem = saveItem;
+window.deleteItemApi = deleteItemApi;
+window.saveSettingsApi = saveSettingsApi;
+window.loginApi = loginApi;
+window.saveContactApi = saveContactApi;
+window.saveItems = saveItems;
+
 async function loadSettingsApi() {
     try {
         const response = await fetch(`${API_URL}/settings`);

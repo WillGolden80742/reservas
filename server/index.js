@@ -4,14 +4,31 @@ const path = require('path');
 const fs = require('fs').promises;
 const { readData, writeData } = require('./data_storage');
 const argon2 = require('argon2');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE"]
+    }
+});
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// Socket.io Connection
+io.on('connection', (socket) => {
+    console.log('Admin connected:', socket.id);
+    socket.on('disconnect', () => {
+        console.log('Admin disconnected:', socket.id);
+    });
+});
 
 // Basic Data Storage Helpers (will be moved to controllers later)
 const getMonthData = async (date = new Date()) => {
@@ -43,6 +60,9 @@ app.post('/api/items', async (req, res) => {
         const data = await getMonthData(date);
         data.push(newItem);
         await saveMonthData(data, date);
+
+        // Notify admins
+        io.emit('calendarUpdate', { type: 'create', item: newItem });
 
         res.status(201).json(newItem);
     } catch (error) {
@@ -86,6 +106,9 @@ app.put('/api/items/:id', async (req, res) => {
         data[index] = { ...data[index], ...req.body, updatedAt: new Date().toISOString() };
         await saveMonthData(data, date);
 
+        // Notify admins
+        io.emit('calendarUpdate', { type: 'update', item: data[index] });
+
         res.json(data[index]);
     } catch (error) {
         console.error(error);
@@ -113,6 +136,10 @@ app.delete('/api/items/:id', async (req, res) => {
         }
 
         await saveMonthData(filteredData, date);
+
+        // Notify admins
+        io.emit('calendarUpdate', { type: 'delete', id: id });
+
         res.status(204).send();
     } catch (error) {
         console.error(error);
@@ -139,6 +166,10 @@ app.post('/api/contacts', async (req, res) => {
         };
         data.push(newContact);
         await require('./data_storage').writeContacts(data);
+
+        // Notify admins
+        io.emit('contactsUpdate', { type: 'create', contact: newContact });
+
         res.status(201).json(newContact);
     } catch (error) {
         res.status(500).json({ error: 'Failed' });
@@ -148,6 +179,10 @@ app.post('/api/contacts', async (req, res) => {
 app.put('/api/contacts', async (req, res) => {
     try {
         await require('./data_storage').writeContacts(req.body);
+
+        // Notify admins
+        io.emit('contactsUpdate', { type: 'update' });
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Failed' });
@@ -167,6 +202,10 @@ app.get('/api/courtesies', async (req, res) => {
 app.post('/api/courtesies', async (req, res) => {
     try {
         await require('./data_storage').writeCourtesies(req.body);
+
+        // Notify admins
+        io.emit('courtesiesUpdate', req.body);
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Failed' });
@@ -190,6 +229,10 @@ app.post('/api/settings', async (req, res) => {
         const currentSettings = await require('./data_storage').readSettings();
         const newSettings = { ...currentSettings, ...req.body };
         await require('./data_storage').writeSettings(newSettings);
+
+        // Notify admins
+        io.emit('settingsUpdate', newSettings);
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Failed' });
@@ -232,6 +275,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

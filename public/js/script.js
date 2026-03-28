@@ -1400,4 +1400,43 @@ document.addEventListener('DOMContentLoaded', async () => {
             openModal(DOM.alertModalOverlay, 'Erro', 'Não foi possível salvar os dados.', 'error');
         }
     });
+
+    // --- Sincronização em Tempo Real via WebSockets ---
+    const socket = io();
+
+    socket.on('calendarUpdate', async (data) => {
+        console.log('Atualização de calendário recebida:', data);
+        await loadItems(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+        renderCalendar();
+        renderUpcomingItems(DOM.upcomingSearchInput.value);
+        renderOrdersList(DOM.ordersSearchInput.value);
+        if (DOM.itemModalOverlay.classList.contains('visible') && selectedDate) {
+            renderExistingItems(getFormattedDate(selectedDate));
+        }
+    });
+
+    socket.on('contactsUpdate', async (data) => {
+        console.log('Atualização de contatos recebida:', data);
+        await loadContactsApi(); // Fetches and updates global 'contacts' array
+        renderContacts(DOM.contactsSearchInput.value);
+        // If searching in item modal, refresh results
+        if (DOM.itemModalOverlay.classList.contains('visible')) {
+            searchContactsInItemModal(DOM.nameInput.value);
+        }
+    });
+
+    socket.on('courtesiesUpdate', async (data) => {
+        console.log('Atualização de cortesias recebida:', data);
+        await loadCourtesiesApi();
+        renderCourtesyOptions(DOM.courtesySearchInput.value);
+    });
+
+    socket.on('settingsUpdate', (data) => {
+        console.log('Atualização de configurações recebida:', data);
+        currentSettings = data;
+        // If settings view is open, re-render it
+        if (DOM.settingsView.style.display !== 'none') {
+            renderSettings();
+        }
+    });
 });

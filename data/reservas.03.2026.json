@@ -46,17 +46,19 @@
     "updatedAt": "2026-03-28T01:35:42.260Z"
   },
   {
-    "status": "Pendente",
+    "status": "Confirmado",
     "type": "reservation",
     "date": "2026-03-31",
     "qtyPeople": 12,
     "phone": "5555319999999",
     "name": "goldencross",
-    "time": "16:30",
+    "time": "13:30",
     "isBirthday": true,
     "courtesy": "Brigadeiro",
     "observations": "Pelo link público. Bolo: Sim.",
-    "id": "1774661813036",
-    "createdAt": "2026-03-28T01:36:53.036Z"
+    "id": "1774662272681",
+    "createdAt": "2026-03-28T01:44:32.681Z",
+    "description": null,
+    "updatedAt": "2026-03-28T01:44:55.302Z"
   }
 ]
