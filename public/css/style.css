@@ -3,7 +3,7 @@
     --primary-color: #007AFF;
     --secondary-color: #34C759;
     --accent-color: #FF9500;
-    
+
     /* Cores do sistema */
     --primary-bg: #F2F2F7;
     --secondary-bg: #FFFFFF;
@@ -848,6 +848,7 @@ input:checked+.slider:before {
 
 /* Mobile Portrait Responsive Styles */
 @media (max-width: 767px) {
+
     /* Adjust body padding for better space usage on mobile */
     body {
         padding-bottom: 70px;
@@ -895,7 +896,7 @@ input:checked+.slider:before {
         gap: 2px;
         padding: 8px;
         border-radius: 10px;
-        min-width: 0;
+        min-width: 100%;
         overflow-x: hidden;
     }
 
@@ -1121,7 +1122,7 @@ input:checked+.slider:before {
     .calendar-grid {
         gap: 1px;
         padding: 6px;
-        min-width: 0;
+        min-width: 100%;
         overflow-x: hidden;
     }
 
@@ -1257,7 +1258,7 @@ input:checked+.slider:before {
     transform: translateY(-1px);
 }
 
-.day-checkbox input[type="checkbox"]:checked + .day-label {
+.day-checkbox input[type="checkbox"]:checked+.day-label {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
@@ -1295,6 +1296,7 @@ input:checked+.slider:before {
         opacity: 0;
         transform: scale(0.85) translateY(4px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -1547,7 +1549,8 @@ input:checked+.slider:before {
     margin-bottom: 20px;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin; /* Firefox */
+    scrollbar-width: thin;
+    /* Firefox */
     scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
 }
 
@@ -1580,7 +1583,7 @@ input:checked+.slider:before {
     white-space: nowrap;
     transition: all 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
     flex-shrink: 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
 }
 
 .settings-tab-btn:hover {
@@ -1588,7 +1591,7 @@ input:checked+.slider:before {
     border-color: var(--primary-color);
     color: var(--primary-color);
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .settings-tab-btn.active {
@@ -1618,6 +1621,7 @@ input:checked+.slider:before {
         opacity: 0;
         transform: translateY(5px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
