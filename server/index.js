@@ -372,15 +372,15 @@ app.post('/api/upload-logo', authenticateToken, upload.single('logo'), async (re
 
 // Serve frontend
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'admin.html'));
 });
 
 app.get('/form', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'formulario_clientes.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'form.html'));
 });
 
 app.get('/', (req, res) => {
-    res.redirect('/form');
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 app.get('*', (req, res) => {
