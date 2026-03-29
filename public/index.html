@@ -147,7 +147,7 @@
                     </div>
 
                     <div class="settings-section">
-                        <h3><span class="mdi mdi-currency-usd"></span> Pagamento e PIX</h3>
+                        <h3><span class="mdi mdi-currency-usd"></span> Pagamento PIX e Redirecionamento</h3>
                         <div class="form-group">
                             <label for="settings-pix-key">Chave PIX:</label>
                             <input type="text" id="settings-pix-key">
@@ -173,9 +173,18 @@
                     <div class="settings-section">
                         <h3><span class="mdi mdi-image"></span> Logo da Aplicação</h3>
                         <div class="form-group">
-                            <label for="settings-logo-file">Fazer Upload de Nova Logo:</label>
-                            <input type="file" id="settings-logo-file" accept="image/*">
-                            <p style="font-size: 0.9em; color: var(--light-text-color); margin-top: 5px;">Formatos aceitos: JPEG, PNG, WebP, GIF (Máx. 5MB)</p>
+                            <label>Fazer Upload de Nova Logo:</label>
+                            <!-- Input file oculto -->
+                            <input type="file" id="settings-logo-file" accept="image/*" style="display: none;">
+                            <!-- Interface customizada de upload -->
+                            <div id="logo-upload-button" class="upload-area" style="border: 2px dashed var(--secondary-color); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; background-color: rgba(52, 152, 219, 0.05); transition: all 0.3s ease;">
+                                <div style="font-size: 2em; color: var(--secondary-color); margin-bottom: 10px;">
+                                    <span class="mdi mdi-cloud-upload"></span>
+                                </div>
+                                <p style="margin: 10px 0; font-weight: 500; color: var(--secondary-color);">Clique para fazer upload</p>
+                                <p style="font-size: 0.85em; color: var(--light-text-color); margin: 5px 0;">ou arraste uma imagem aqui</p>
+                            </div>
+                            <p style="font-size: 0.9em; color: var(--light-text-color); margin-top: 8px;">Formatos aceitos: JPEG, PNG, WebP, GIF (Máx. 5MB)</p>
                             <p style="font-size: 0.9em; color: var(--light-text-color); margin-top: 5px;">Preview do logo atual:</p>
                             <img id="logo-preview" src="" alt="Logo" style="max-width: 150px; max-height: 100px; margin-top: 10px; border-radius: 5px;">
                             <p id="logo-upload-status" style="text-align: center; margin-top: 10px; display: none;"></p>

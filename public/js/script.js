@@ -82,6 +82,7 @@ const DOM = {
     settingsPricePerKgInput: document.getElementById('settings-price-per-kg'),
     settingsWhatsappInput: document.getElementById('settings-whatsapp'),
     settingsLogoFile: document.getElementById('settings-logo-file'),
+    logoUploadButton: document.getElementById('logo-upload-button'),
     logoPreview: document.getElementById('logo-preview'),
     logoUploadStatus: document.getElementById('logo-upload-status'),
     newTagInput: document.getElementById('new-tag-input'),
@@ -1318,11 +1319,61 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // Event listener for logo upload button (simulates file input click)
+    if (DOM.logoUploadButton && DOM.settingsLogoFile) {
+        DOM.logoUploadButton.addEventListener('click', () => {
+            DOM.settingsLogoFile.click();
+        });
+
+        // Visual feedback on hover
+        DOM.logoUploadButton.addEventListener('mouseenter', function() {
+            this.style.borderColor = '#2980b9';
+            this.style.backgroundColor = 'rgba(52, 152, 219, 0.15)';
+        });
+
+        DOM.logoUploadButton.addEventListener('mouseleave', function() {
+            this.style.borderColor = 'var(--secondary-color)';
+            this.style.backgroundColor = 'rgba(52, 152, 219, 0.05)';
+        });
+
+        // Drag and drop support
+        DOM.logoUploadButton.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            DOM.logoUploadButton.style.borderColor = '#2980b9';
+            DOM.logoUploadButton.style.backgroundColor = 'rgba(52, 152, 219, 0.25)';
+        });
+
+        DOM.logoUploadButton.addEventListener('dragleave', () => {
+            DOM.logoUploadButton.style.borderColor = 'var(--secondary-color)';
+            DOM.logoUploadButton.style.backgroundColor = 'rgba(52, 152, 219, 0.05)';
+        });
+
+        DOM.logoUploadButton.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                DOM.settingsLogoFile.files = files;
+                // Trigger change event manually
+                DOM.settingsLogoFile.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            DOM.logoUploadButton.style.borderColor = 'var(--secondary-color)';
+            DOM.logoUploadButton.style.backgroundColor = 'rgba(52, 152, 219, 0.05)';
+        });
+    }
+
     // Event listener for logo file upload
     if (DOM.settingsLogoFile) {
         DOM.settingsLogoFile.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            // Show preview immediately using FileReader
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                DOM.logoPreview.src = event.target.result;
+                DOM.logoPreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
 
             DOM.logoUploadStatus.style.display = 'block';
             DOM.logoUploadStatus.textContent = 'Enviando imagem...';
@@ -1333,7 +1384,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (result.success) {
                 currentSettings.logo = result.logoPath;
                 DOM.logoPreview.src = result.logoPath;
-                DOM.logoPreview.style.display = 'block';
                 DOM.loginLogo.src = result.logoPath;
                 DOM.logoUploadStatus.textContent = 'Logo atualizada com sucesso!';
                 DOM.logoUploadStatus.style.color = '#27ae60';
