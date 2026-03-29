@@ -1583,6 +1583,15 @@ input:checked+.slider:before {
 .settings-tab-content.active {
     display: block;
 }
+/* Oculta o texto das abas de configuração quando não está ativa (desktop e mobile) */
+.settings-tab-btn span:last-child {
+    display: none;
+    transition: opacity 0.2s;
+}
+.settings-tab-btn.active span:last-child,
+.settings-tab-btn:focus span:last-child {
+    display: inline;
+}
 
 @keyframes fadeIn {
     from {
@@ -1595,6 +1604,7 @@ input:checked+.slider:before {
         transform: translateY(0);
     }
 }
+
 
 /* Responsive Settings Tabs */
 @media (max-width: 767px) {
@@ -1618,11 +1628,14 @@ input:checked+.slider:before {
         flex-shrink: 0;
     }
 
+
+    /* Oculta o texto das abas de configuração quando não está ativa (desktop e mobile) */
     .settings-tab-btn span:last-child {
         display: none;
+        transition: opacity 0.2s;
     }
-
-    .settings-tab-btn.active span:last-child {
+    .settings-tab-btn.active span:last-child,
+    .settings-tab-btn:focus span:last-child {
         display: inline;
     }
 
@@ -1665,13 +1678,6 @@ input:checked+.slider:before {
   }
   .tab-button.active .tab-label,
   .tab-button:focus .tab-label {
-    display: inline;
-  }
-  .logout-btn .tab-label {
-    display: none;
-  }
-  .logout-btn.active .tab-label,
-  .logout-btn:focus .tab-label {
     display: inline;
   }
   .settings-tab-btn .settings-tab-label {
