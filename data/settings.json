@@ -49,5 +49,6 @@
     "pricePerKg": 95
   },
   "whatsappNumber": "5511967105333",
-  "adminPassword": "$argon2id$v=19$m=65536,t=3,p=4$v8ropqNhHdOobxWDkEsufw$wU1/hGXuZ1qZsn/LsxwRy+AjqZtGtfBvJSBlyycwEMM"
+  "adminPassword": "$argon2id$v=19$m=65536,t=3,p=4$v8ropqNhHdOobxWDkEsufw$wU1/hGXuZ1qZsn/LsxwRy+AjqZtGtfBvJSBlyycwEMM",
+  "logo": "/images/bg.png"
 }

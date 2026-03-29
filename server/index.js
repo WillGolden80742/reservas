@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs').promises;
+const multer = require('multer');
+const sharp = require('sharp');
 const { readData, writeData } = require('./data_storage');
 const argon2 = require('argon2');
 const http = require('http');
@@ -10,6 +12,22 @@ const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'nosso_carne_secret_key_2024';
+
+// Configure multer for image uploads (store in memory)
+const storage = multer.memoryStorage();
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (allowedMimes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Apenas imagens JPEG, PNG, WebP e GIF são permitidas'));
+        }
+    }
+});
 
 // Middleware to authenticate JWT
 const authenticateToken = (req, res, next) => {
@@ -319,6 +337,36 @@ app.post('/api/change-password', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error('Change password error:', error);
         res.status(500).json({ error: 'Falha ao alterar a senha' });
+    }
+});
+
+// Upload Logo Image
+app.post('/api/upload-logo', authenticateToken, upload.single('logo'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
+        }
+
+        const imagesPath = path.join(__dirname, '..', 'public', 'images');
+        const bgFilePath = path.join(imagesPath, 'bg.png');
+
+        // Ensure images directory exists
+        try {
+            await fs.mkdir(imagesPath, { recursive: true });
+        } catch (err) {
+            // Directory might already exist
+        }
+
+        // Convert image to PNG and save as bg.png (always overwrite)
+        await sharp(req.file.buffer)
+            .png()
+            .toFile(bgFilePath);
+
+        const logoPath = '/images/bg.png';
+        res.json({ success: true, logoPath });
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ error: 'Falha ao fazer upload da imagem' });
     }
 });
 

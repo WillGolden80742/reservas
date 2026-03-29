@@ -308,7 +308,40 @@ async function changePasswordApi(oldPassword, newPassword) {
     }
 }
 
+async function uploadLogoApi(file) {
+    try {
+        const formData = new FormData();
+        formData.append('logo', file);
+
+        const token = getAuthToken();
+        const response = await fetch(`${API_URL}/upload-logo`, {
+            method: 'POST',
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : ''
+            },
+            body: formData
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return { success: false, error: 'Não autorizado' };
+        }
+
+        if (response.ok) {
+            const data = await response.json();
+            return { success: true, logoPath: data.logoPath };
+        } else {
+            const data = await response.json();
+            return { success: false, error: data.error };
+        }
+    } catch (e) {
+        console.error("Erro ao fazer upload da logo:", e);
+        return { success: false, error: 'Erro ao fazer upload da imagem' };
+    }
+}
+
 window.changePasswordApi = changePasswordApi;
+window.uploadLogoApi = uploadLogoApi;
 
 function checkLocalStorageCapacity() { }
 function cleanOldItems() { }

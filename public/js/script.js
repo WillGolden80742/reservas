@@ -81,6 +81,9 @@ const DOM = {
     settingsPixCityInput: document.getElementById('settings-pix-city'),
     settingsPricePerKgInput: document.getElementById('settings-price-per-kg'),
     settingsWhatsappInput: document.getElementById('settings-whatsapp'),
+    settingsLogoFile: document.getElementById('settings-logo-file'),
+    logoPreview: document.getElementById('logo-preview'),
+    logoUploadStatus: document.getElementById('logo-upload-status'),
     newTagInput: document.getElementById('new-tag-input'),
     addTagButton: document.getElementById('add-tag-button'),
     newHourInput: document.getElementById('new-hour-input'),
@@ -88,6 +91,7 @@ const DOM = {
     saveSettingsButton: document.getElementById('save-settings-button'),
 
     loginOverlay: document.getElementById('login-overlay'),
+    loginLogo: document.querySelector('.header img'),
     loginForm: document.getElementById('login-form'),
     adminPasswordInput: document.getElementById('admin-password'),
     loginError: document.getElementById('login-error'),
@@ -1115,6 +1119,13 @@ async function renderSettings() {
     DOM.settingsPixCityInput.value = currentSettings.pix.city;
     DOM.settingsPricePerKgInput.value = currentSettings.pix.pricePerKg;
     DOM.settingsWhatsappInput.value = currentSettings.whatsappNumber || '';
+    
+    if (currentSettings.logo) {
+        DOM.logoPreview.src = currentSettings.logo;
+        DOM.logoPreview.style.display = 'block';
+    } else {
+        DOM.logoPreview.style.display = 'none';
+    }
 
     renderHoursTags();
     renderCourtesyTags();
@@ -1166,6 +1177,12 @@ async function initApp() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     toggleItemFields();
+
+    // Load settings (including logo) even before login
+    const settings = await loadSettingsApi();
+    if (settings && settings.logo && DOM.loginLogo) {
+        DOM.loginLogo.src = settings.logo;
+    }
 
     if (localStorage.getItem('admin_token')) {
         DOM.loginOverlay.classList.remove('visible');
@@ -1223,6 +1240,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const password = DOM.adminPasswordInput.value;
         const success = await loginApi(password);
         if (success) {
+            const settings = await loadSettingsApi();
+            if (settings && settings.logo && DOM.loginLogo) {
+                DOM.loginLogo.src = settings.logo;
+            }
             DOM.loginOverlay.classList.remove('visible');
             DOM.app.style.display = 'block';
             await initApp();
@@ -1283,7 +1304,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 city: DOM.settingsPixCityInput.value,
                 pricePerKg: parseFloat(DOM.settingsPricePerKgInput.value)
             },
-            whatsappNumber: DOM.settingsWhatsappInput.value.trim()
+            whatsappNumber: DOM.settingsWhatsappInput.value.trim(),
+            logo: currentSettings.logo
         };
 
         try {
@@ -1295,6 +1317,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             openModal(DOM.alertModalOverlay, 'Erro', 'Não foi possível salvar as configurações.', 'error');
         }
     });
+
+    // Event listener for logo file upload
+    if (DOM.settingsLogoFile) {
+        DOM.settingsLogoFile.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            DOM.logoUploadStatus.style.display = 'block';
+            DOM.logoUploadStatus.textContent = 'Enviando imagem...';
+            DOM.logoUploadStatus.style.color = '#3498db';
+
+            const result = await uploadLogoApi(file);
+
+            if (result.success) {
+                currentSettings.logo = result.logoPath;
+                DOM.logoPreview.src = result.logoPath;
+                DOM.logoPreview.style.display = 'block';
+                DOM.loginLogo.src = result.logoPath;
+                DOM.logoUploadStatus.textContent = 'Logo atualizada com sucesso!';
+                DOM.logoUploadStatus.style.color = '#27ae60';
+                setTimeout(() => {
+                    DOM.logoUploadStatus.style.display = 'none';
+                    DOM.settingsLogoFile.value = '';
+                }, 3000);
+            } else {
+                DOM.logoUploadStatus.textContent = result.error || 'Erro ao fazer upload da logo';
+                DOM.logoUploadStatus.style.color = '#e74c3c';
+                DOM.settingsLogoFile.value = '';
+            }
+        });
+    }
 
     // NEW: Event listener for main "Add Contact" button
     DOM.addContactButtonMain.addEventListener('click', () => {
