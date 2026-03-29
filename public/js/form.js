@@ -184,7 +184,7 @@ async function fetchSettings() {
 function updateUIWithSettings() {
     if (!settings) return;
 
-    // Atualizar Regras
+    // Atualizar Regras (exibir a política de cortesia definida no admin)
     const regrasBox = document.getElementById('regras-box');
     if (regrasBox) {
         regrasBox.innerHTML = `
@@ -194,17 +194,23 @@ function updateUIWithSettings() {
         `;
     }
 
-    // Atualizar Horários
+    // Atualizar Horários (sincronizados do painel administrativo)
     const horarioOptionsContainer = document.getElementById('horario-options');
     if (horarioOptionsContainer) {
         horarioOptionsContainer.innerHTML = settings.schedules.hours.map(h => `<div class="option" data-value="${h}">${h}</div>`).join('');
     }
 
-    // Atualizar Sabores de Bolo
+    // ===== SINCRONIZAÇÃO DE CORTESIAS =====
+    // Atualizar SABORES DE BOLO para o painel de cortesia
+    // Estes sabores/opções são gerenciados no painel administrativo (admin.html)
+    // sob "Configurações > Cortesias e Bolos > Opções de Refresco para Aniversariantes"
+    // Quando o admin adiciona/remove um sabor lá, ele aparece automaticamente aqui.
     const saborOptionsContainer = document.getElementById('sabor-options');
     if (saborOptionsContainer) {
+        // Renderizar opções a partir de settings.courtesies.options (sincronizadas do admin)
         saborOptionsContainer.innerHTML = settings.courtesies.options.map(s => `<div class="option" data-value="${s}">${s}</div>`).join('');
-        // Update current select text if it doesn't match new options
+        
+        // Validar se a opção selecionada atual ainda existe (caso tenha sido removida no admin)
         const currentSaborContainer = document.getElementById('sabor');
         const currentSabor = currentSaborContainer.getAttribute('data-value');
         if (!settings.courtesies.options.includes(currentSabor)) {

@@ -1134,15 +1134,31 @@ async function renderSettings() {
 
 function renderCourtesyTags() {
     DOM.settingsCourtesyOptionsContainer.innerHTML = '';
+    
+    if (currentSettings.courtesies.options.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = 'padding: 16px; text-align: center; color: var(--secondary-text); font-size: 14px;';
+        emptyMsg.innerHTML = '<span class="mdi mdi-information-outline"></span> Nenhuma opção de bolo adicionada ainda.';
+        DOM.settingsCourtesyOptionsContainer.appendChild(emptyMsg);
+        return;
+    }
+    
     currentSettings.courtesies.options.forEach(option => {
         const tag = document.createElement('div');
         tag.classList.add('tag');
         tag.innerHTML = `${option} <span class="mdi mdi-close" data-option="${option}"></span>`;
+        
         tag.querySelector('.mdi-close').addEventListener('click', (e) => {
             const opt = e.target.dataset.option;
-            currentSettings.courtesies.options = currentSettings.courtesies.options.filter(o => o !== opt);
-            renderCourtesyTags();
+            openModal(DOM.alertModalOverlay, 'Remover Sabor', `Tem certeza que deseja remover "${opt}" da lista de cortesias?`, 'warning');
+            DOM.alertModalOverlay.querySelector('.primary-button').textContent = 'Remover';
+            DOM.alertModalOverlay.querySelector('.primary-button').onclick = () => {
+                currentSettings.courtesies.options = currentSettings.courtesies.options.filter(o => o !== opt);
+                renderCourtesyTags();
+                closeModal(DOM.alertModalOverlay);
+            };
         });
+        
         DOM.settingsCourtesyOptionsContainer.appendChild(tag);
     });
 }
@@ -1255,11 +1271,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     DOM.addTagButton.addEventListener('click', () => {
         const val = DOM.newTagInput.value.trim();
-        if (val && !currentSettings.courtesies.options.includes(val)) {
-            currentSettings.courtesies.options.push(val);
-            renderCourtesyTags();
-            DOM.newTagInput.value = '';
+        
+        if (!val) {
+            openModal(DOM.alertModalOverlay, 'Campo vazio', 'Digite um novo sabor/opção de bolo', 'warning');
+            return;
         }
+        
+        if (currentSettings.courtesies.options.includes(val)) {
+            openModal(DOM.alertModalOverlay, 'Opção duplicada', `"${val}" já existe na lista de sabores`, 'warning');
+            return;
+        }
+        
+        currentSettings.courtesies.options.push(val);
+        renderCourtesyTags();
+        DOM.newTagInput.value = '';
+        DOM.newTagInput.focus();
     });
 
     DOM.addHourButton.addEventListener('click', () => {
