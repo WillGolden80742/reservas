@@ -1345,7 +1345,6 @@ input:checked+.slider:before {
     margin-bottom: 16px;
     border-radius: 16px;
     background: #F2F2F7;
-    padding: 12px;
 }
 
 .home-header h1 {
