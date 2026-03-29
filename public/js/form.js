@@ -131,11 +131,19 @@ function renderCalendar() {
     const diasPermitidos = settings ? settings.schedules.days : ['Segunda', 'Terça', 'Quarta', 'Quinta'];
     const mapaDias = { 'Domingo': 0, 'Segunda': 1, 'Terça': 2, 'Quarta': 3, 'Quinta': 4, 'Sexta': 5, 'Sábado': 6 };
     const indicesPermitidos = diasPermitidos.map(d => mapaDias[d]);
+    
+    // Get blocked special dates
+    const blockedDates = settings && settings.schedules.specialDates ? settings.schedules.specialDates : [];
 
     for (let dia = 1; dia <= diasNoMes; dia++) {
         const d = new Date(ano, mes, dia);
         const diaSemana = d.getDay();
-        const isDisabled = !indicesPermitidos.includes(diaSemana) || (d < hoje);
+        
+        // Format date as DD/MM/YYYY to check against blocked dates
+        const dataFormatada = String(dia).padStart(2, '0') + '/' + String(mes + 1).padStart(2, '0') + '/' + ano;
+        const isBlockedDate = blockedDates.includes(dataFormatada);
+        
+        const isDisabled = !indicesPermitidos.includes(diaSemana) || (d < hoje) || isBlockedDate;
         const isSelected = dataSelecionada === d.toISOString().split('T')[0];
         const isToday = d.getTime() === hoje.getTime();
 
@@ -207,11 +215,18 @@ function updateUIWithSettings() {
     // Atualizar Regras (exibir a política de cortesia definida no admin)
     const regrasBox = document.getElementById('regras-box');
     if (regrasBox) {
-        regrasBox.innerHTML = `
+        let regrasHTML = `
             • <b>Dias:</b> ${settings.schedules.days.join(' a ')}.<br>
             • <b>Horário:</b> ${settings.schedules.hours[0]} às ${settings.schedules.hours[settings.schedules.hours.length - 1]}.<br>
             • <b>Cortesia:</b> ${settings.courtesies.rule}.
         `;
+        
+        // Add blocked dates info if there are any
+        if (settings.schedules.specialDates && settings.schedules.specialDates.length > 0) {
+            regrasHTML += `<br>⚠️ <b>Datas bloqueadas:</b> ${settings.schedules.specialDates.join(', ')}.`;
+        }
+        
+        regrasBox.innerHTML = regrasHTML;
     }
 
     // Atualizar Horários (sincronizados do painel administrativo)

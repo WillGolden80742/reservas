@@ -1451,6 +1451,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         DOM.newTagInput.focus();
     });
 
+    DOM.addSpecialDateButton.addEventListener('click', () => {
+        const dateValue = DOM.newSpecialDateInput.value.trim();
+        
+        if (!dateValue) {
+            openModal(DOM.alertModalOverlay, 'Campo vazio', 'Selecione uma data', 'warning');
+            return;
+        }
+        
+        // Convert YYYY-MM-DD to DD/MM/YYYY
+        const [year, month, day] = dateValue.split('-');
+        const formattedDate = `${day}/${month}/${year}`;
+        
+        if (currentSettings.schedules.specialDates.includes(formattedDate)) {
+            openModal(DOM.alertModalOverlay, 'Data duplicada', 'Esta data já foi adicionada', 'warning');
+            return;
+        }
+        
+        // Validate if date is valid (try to parse it)
+        const testDate = new Date(year, month - 1, day);
+        if (testDate.getFullYear() !== parseInt(year) || testDate.getMonth() !== parseInt(month) - 1 || testDate.getDate() !== parseInt(day)) {
+            openModal(DOM.alertModalOverlay, 'Data inválida', 'A data fornecida não é válida', 'warning');
+            return;
+        }
+        
+        currentSettings.schedules.specialDates.push(formattedDate);
+        renderSpecialDateTags();
+        DOM.newSpecialDateInput.value = '';
+    });
+
+    // Allow Enter key to add special date
+    DOM.newSpecialDateInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            DOM.addSpecialDateButton.click();
+        }
+    });
+
     DOM.addHourButton.addEventListener('click', () => {
         const val = DOM.newHourInput.value.trim();
         const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;

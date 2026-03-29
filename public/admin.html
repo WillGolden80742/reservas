@@ -178,21 +178,20 @@
                                 </div>
                             </div>
                             <!-- oculto enquanto não foi totalmente implementado -->
-                            <div class="form-group" style="display: none;">
+                            <div class="form-group">
                                 <label>
-                                    <span class="mdi mdi-calendar-plus"></span>
-                                    Datas Especiais de Funcionamento:
+                                    <span class="mdi mdi-calendar-block"></span>
+                                    Datas Bloqueadas (Não Permitidas):
                                 </label>
                                 <small style="color: var(--secondary-text); display: block; margin-bottom: 8px;">
-                                    Adicione datas específicas em que o estabelecimento funcionará mesmo fora dos dias
-                                    regulares (ex: feriados, eventos).
+                                    Adicione datas específicas que serão bloqueadas e indisponíveis para reservas
+                                    (ex: manutenção, eventos privados, datas de fechamento).
                                 </small>
                                 <div id="settings-special-dates-container" class="tag-container">
                                     <!-- Special date tags will be added here -->
                                 </div>
                                 <div class="input-with-button">
-                                    <input type="text" id="new-special-date-input" placeholder="DD/MM/AAAA"
-                                        maxlength="10">
+                                    <input type="date" id="new-special-date-input">
                                     <button type="button" id="add-special-date-button" class="secondary-button">
                                         <span class="mdi mdi-plus"></span> Adicionar
                                     </button>
