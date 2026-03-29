@@ -124,6 +124,14 @@ const DOM = {
     confirmPasswordInput: document.getElementById('confirm-password'),
     changePasswordButton: document.getElementById('change-password-button'),
     changePasswordMessage: document.getElementById('change-password-message'),
+    // User management
+    adminUsernameInput: document.getElementById('admin-username'),
+    newUserUsernameInput: document.getElementById('new-user-username'),
+    newUserPasswordInput: document.getElementById('new-user-password'),
+    newUserRoleInput: document.getElementById('new-user-role'),
+    addUserBtn: document.getElementById('add-user-button'),
+    usersListContainer: document.getElementById('users-list-container'),
+    usersTabBtn: document.getElementById('users-tab-btn'),
 };
 
 let currentMonth = new Date();
@@ -419,6 +427,96 @@ function resetItemForm() {
     // NEW: Hide contact search results in item modal
     DOM.contactSearchResults.innerHTML = '';
     DOM.contactSearchResults.classList.remove('visible');
+}
+
+// --- Multi-User & Permissions Logic ---
+async function fetchAndRenderUsers() {
+    if (!DOM.usersListContainer) return;
+    const users = await loadUsersApi();
+    
+    DOM.usersListContainer.innerHTML = '';
+    if (users.length === 0) {
+        DOM.usersListContainer.innerHTML = '<p style="text-align: center; color: var(--secondary-text); padding: 10px;">Nenhum usuário cadastrado.</p>';
+        return;
+    }
+    
+    users.forEach(user => {
+        const userEl = document.createElement('div');
+        userEl.classList.add('item-item');
+        userEl.style.padding = '10px';
+        userEl.style.marginBottom = '8px';
+        userEl.style.display = 'flex';
+        userEl.style.justifyContent = 'space-between';
+        userEl.style.alignItems = 'center';
+        
+        userEl.innerHTML = `
+            <div class="item-details">
+                <p><strong>${user.username}</strong> (${user.role === 'administrador' ? 'ADM' : 'Comum'})</p>
+                <p style="font-size: 0.75em; color: var(--secondary-text); margin-top: 2px;">Desde: ${new Date(user.createdAt).toLocaleDateString()}</p>
+            </div>
+            <div class="item-actions">
+                <button type="button" class="delete-user-btn secondary-button" data-id="${user.id}" title="Excluir Usuário" style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px;">
+                    <span class="mdi mdi-delete"></span>
+                </button>
+            </div>
+        `;
+        DOM.usersListContainer.appendChild(userEl);
+    });
+    
+    DOM.usersListContainer.querySelectorAll('.delete-user-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.dataset.id;
+            openModal(DOM.alertModalOverlay, 'Confirmar', 'Deseja excluir este usuário?', 'danger');
+            DOM.alertModalOverlay.querySelector('.primary-button').textContent = 'Excluir';
+            DOM.alertModalOverlay.querySelector('.primary-button').onclick = async () => {
+                const ok = await deleteUserApi(id);
+                if (ok) {
+                    fetchAndRenderUsers();
+                    closeModal(DOM.alertModalOverlay);
+                } else {
+                    openModal(DOM.alertModalOverlay, 'Erro', 'Falha ao excluir usuário', 'error');
+                }
+            };
+        });
+    });
+}
+
+function checkUserPermissions() {
+    const role = localStorage.getItem('user_role') || 'administrador';
+    
+    if (role === 'comum') {
+        DOM.settingsTab.style.display = 'none';
+        if (DOM.settingsView.style.display !== 'none') {
+            showView('calendar-view');
+        }
+    } else {
+        DOM.settingsTab.style.display = 'flex';
+        if (DOM.usersTabBtn) DOM.usersTabBtn.style.display = 'flex';
+        fetchAndRenderUsers();
+    }
+}
+
+async function loadInitialData() {
+    await loadItems(currentMonth.getMonth() + 1, currentMonth.getFullYear());
+    renderCalendar();
+    renderUpcomingItems();
+    renderOrdersList();
+    const settings = await loadSettingsApi();
+    if (settings) {
+        currentSettings = settings;
+        renderSettings();
+    }
+    checkUserPermissions();
+}
+
+// Initialize visibility on load
+if (localStorage.getItem('admin_token')) {
+    DOM.loginOverlay.classList.remove('visible');
+    DOM.app.style.display = 'block';
+    loadInitialData();
+} else {
+    DOM.loginOverlay.classList.add('visible');
+    DOM.app.style.display = 'none';
 }
 
 function toggleItemFields() {
@@ -1204,7 +1302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (localStorage.getItem('admin_token')) {
         DOM.loginOverlay.classList.remove('visible');
         DOM.app.style.display = 'block';
-        await initApp();
+        loadInitialData();
     } else {
         DOM.loginOverlay.classList.add('visible');
         DOM.app.style.display = 'none';
@@ -1254,20 +1352,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     DOM.loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const password = DOM.adminPasswordInput.value;
-        const success = await loginApi(password);
+        const username = DOM.adminUsernameInput.value.trim();
+        const password = DOM.adminPasswordInput.value.trim();
+        
+        const success = await loginApi(username || null, password);
         if (success) {
-            const settings = await loadSettingsApi();
-            if (settings && settings.logo && DOM.loginLogo) {
-                DOM.loginLogo.src = settings.logo;
-            }
             DOM.loginOverlay.classList.remove('visible');
             DOM.app.style.display = 'block';
-            await initApp();
+            await loadInitialData();
         } else {
             DOM.loginError.style.display = 'block';
         }
     });
+
+    if (DOM.addUserBtn) {
+        DOM.addUserBtn.addEventListener('click', async () => {
+            const username = DOM.newUserUsernameInput.value.trim();
+            const password = DOM.newUserPasswordInput.value.trim();
+            const role = DOM.newUserRoleInput.value;
+            
+            if (!username || !password) {
+                openModal(DOM.alertModalOverlay, 'Aviso', 'Preencha usuário e senha', 'info');
+                return;
+            }
+            
+            const result = await saveUserApi({ username, password, role });
+            if (result.success) {
+                DOM.newUserUsernameInput.value = '';
+                DOM.newUserPasswordInput.value = '';
+                fetchAndRenderUsers();
+                openModal(DOM.alertModalOverlay, 'Sucesso', 'Usuário criado!', 'success');
+            } else {
+                openModal(DOM.alertModalOverlay, 'Erro', result.error, 'error');
+            }
+        });
+    }
 
     DOM.addTagButton.addEventListener('click', () => {
         const val = DOM.newTagInput.value.trim();
@@ -1687,6 +1806,48 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     });
+
+    if (DOM.changePasswordButton) {
+        DOM.changePasswordButton.addEventListener('click', async () => {
+            const oldPassword = DOM.currentPasswordInput.value;
+            const newPassword = DOM.newPasswordInput.value;
+            const confirmPassword = DOM.confirmPasswordInput.value;
+
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                DOM.changePasswordMessage.textContent = 'Preencha todos os campos';
+                DOM.changePasswordMessage.style.color = '#e74c3c';
+                DOM.changePasswordMessage.style.display = 'block';
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                DOM.changePasswordMessage.textContent = 'As novas senhas não coincidem';
+                DOM.changePasswordMessage.style.color = '#e74c3c';
+                DOM.changePasswordMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                const result = await changePasswordApi(oldPassword, newPassword);
+                if (result.success) {
+                    DOM.changePasswordMessage.textContent = result.message;
+                    DOM.changePasswordMessage.style.color = '#27ae60';
+                    DOM.changePasswordMessage.style.display = 'block';
+                    DOM.currentPasswordInput.value = '';
+                    DOM.newPasswordInput.value = '';
+                    DOM.confirmPasswordInput.value = '';
+                } else {
+                    DOM.changePasswordMessage.textContent = result.error;
+                    DOM.changePasswordMessage.style.color = '#e74c3c';
+                    DOM.changePasswordMessage.style.display = 'block';
+                }
+            } catch (error) {
+                DOM.changePasswordMessage.textContent = 'Erro ao conectar ao servidor';
+                DOM.changePasswordMessage.style.color = '#e74c3c';
+                DOM.changePasswordMessage.style.display = 'block';
+            }
+        });
+    }
 
     if (DOM.logoutBtn) {
         DOM.logoutBtn.addEventListener('click', () => {

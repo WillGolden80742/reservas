@@ -230,10 +230,72 @@ window.saveSettingsApi = saveSettingsApi;
 window.loginApi = loginApi;
 window.logout = () => {
     setAuthToken(null);
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user_name');
     window.location.reload();
 };
 window.saveContactApi = saveContactApi;
 window.saveItems = saveItems;
+window.loadUsersApi = loadUsersApi;
+window.saveUserApi = saveUserApi;
+window.deleteUserApi = deleteUserApi;
+
+async function loadUsersApi() {
+    try {
+        const response = await fetch(`${API_URL}/users`, {
+            headers: getAuthHeaders()
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return [];
+        }
+        if (!response.ok) throw new Error('Failed to fetch users');
+        return await response.json();
+    } catch (e) {
+        console.error("Erro ao carregar usuários da API:", e);
+        return [];
+    }
+}
+
+async function saveUserApi(user) {
+    try {
+        const response = await fetch(`${API_URL}/users`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(user)
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return { success: false, error: 'Não autorizado' };
+        }
+        if (response.ok) {
+            return { success: true, data: await response.json() };
+        } else {
+            const data = await response.json();
+            return { success: false, error: data.error };
+        }
+    } catch (e) {
+        console.error("Erro ao salvar usuário via API:", e);
+        return { success: false, error: 'Erro de rede' };
+    }
+}
+
+async function deleteUserApi(id) {
+    try {
+        const response = await fetch(`${API_URL}/users/${id}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return false;
+        }
+        return response.ok;
+    } catch (e) {
+        console.error("Erro ao deletar usuário via API:", e);
+        return false;
+    }
+}
 
 async function loadSettingsApi() {
     try {
@@ -265,16 +327,20 @@ async function saveSettingsApi(settings) {
     }
 }
 
-async function loginApi(password) {
+async function loginApi(username, password) {
     try {
         const response = await fetch(`${API_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
+            body: JSON.stringify({ username, password })
         });
         if (response.ok) {
             const data = await response.json();
             setAuthToken(data.token);
+            if (data.user) {
+                localStorage.setItem('user_role', data.user.role);
+                localStorage.setItem('user_name', data.user.username);
+            }
             return true;
         }
         return false;
@@ -338,6 +404,31 @@ async function saveColorsApi(colors) {
         return await response.json();
     } catch (e) {
         console.error("Erro ao salvar cores via API:", e);
+        throw e;
+    }
+}
+async function uploadLogoApi(file) {
+    const formData = new FormData();
+    formData.append('logo', file);
+    
+    try {
+        const response = await fetch(`${API_URL}/upload-logo`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${getAuthToken()}`
+            },
+            body: formData
+        });
+        
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return null;
+        }
+        
+        if (!response.ok) throw new Error('Falha ao subir logo');
+        return await response.json();
+    } catch (e) {
+        console.error("Erro ao fazer upload da logo:", e);
         throw e;
     }
 }

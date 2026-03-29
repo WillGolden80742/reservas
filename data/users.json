@@ -1,0 +1,9 @@
+[
+  {
+    "id": "1774754623394",
+    "username": "delivery",
+    "password": "$argon2id$v=19$m=65536,t=3,p=4$GmYySfGVFB99gVVlzDpaaw$LMSvt4wZVLWktNQ0S9IH/ewgTTXa5VN/tD6CNKCV+88",
+    "role": "comum",
+    "createdAt": "2026-03-29T03:23:43.394Z"
+  }
+]

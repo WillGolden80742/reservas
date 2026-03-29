@@ -173,6 +173,22 @@ async function writeColors(data) {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 }
 
+async function readUsers() {
+    const filePath = path.join(DATA_DIR, 'users.json');
+    try {
+        await fs.access(filePath);
+    } catch {
+        return [];
+    }
+    const data = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(data || '[]');
+}
+
+async function writeUsers(data) {
+    const filePath = path.join(DATA_DIR, 'users.json');
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+}
+
 module.exports = {
     readData,
     writeData,
@@ -184,5 +200,7 @@ module.exports = {
     readSettings,
     writeSettings,
     readColors,
-    writeColors
+    writeColors,
+    readUsers,
+    writeUsers
 };

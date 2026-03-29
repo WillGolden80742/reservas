@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const multer = require('multer');
 const sharp = require('sharp');
-const { readData, writeData } = require('./data_storage');
+const { readData, writeData, readUsers, writeUsers } = require('./data_storage');
 const argon2 = require('argon2');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -29,7 +29,6 @@ const upload = multer({
     }
 });
 
-// Middleware to authenticate JWT
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -41,6 +40,14 @@ const authenticateToken = (req, res, next) => {
         req.user = user;
         next();
     });
+};
+
+const authorizeAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'administrador') {
+        next();
+    } else {
+        res.status(403).json({ error: 'Acesso negado: Apenas administradores podem acessar esta área.' });
+    }
 };
 
 const app = express();
@@ -252,7 +259,7 @@ app.get('/api/courtesies', async (req, res) => {
     }
 });
 
-app.post('/api/courtesies', authenticateToken, async (req, res) => {
+app.post('/api/courtesies', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         await require('./data_storage').writeCourtesies(req.body);
 
@@ -277,7 +284,7 @@ app.get('/api/settings', async (req, res) => {
     }
 });
 
-app.post('/api/settings', authenticateToken, async (req, res) => {
+app.post('/api/settings', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         const currentSettings = await require('./data_storage').readSettings();
         const newSettings = { ...currentSettings, ...req.body };
@@ -302,7 +309,7 @@ app.get('/api/colors', async (req, res) => {
     }
 });
 
-app.post('/api/colors', authenticateToken, async (req, res) => {
+app.post('/api/colors', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         await require('./data_storage').writeColors(req.body);
 
@@ -315,19 +322,45 @@ app.post('/api/colors', authenticateToken, async (req, res) => {
     }
 });
 
-// Admin Login
+// User Login
 app.post('/api/login', async (req, res) => {
     try {
-        const { password } = req.body;
-        const settings = await require('./data_storage').readSettings();
+        const { username, password } = req.body;
+        
+        // Check if it's a multi-user login
+        if (username) {
+            const users = await readUsers();
+            const user = users.find(u => u.username === username);
 
-        const isMatch = await argon2.verify(settings.adminPassword, password);
+            if (user && await argon2.verify(user.password, password)) {
+                const token = jwt.sign({ 
+                    username: user.username, 
+                    role: user.role 
+                }, JWT_SECRET, { expiresIn: '8h' });
+                return res.json({ 
+                    success: true, 
+                    token, 
+                    user: { username: user.username, role: user.role } 
+                });
+            }
+        }
+
+        // Fallback or Legacy: Check against settings adminPassword (treat as administrator)
+        const settings = await require('./data_storage').readSettings();
+        const isMatch = await argon2.verify(settings.adminPassword, password || '');
 
         if (isMatch) {
-            const token = jwt.sign({ admin: true }, JWT_SECRET, { expiresIn: '8h' });
-            res.json({ success: true, token });
+            const token = jwt.sign({ 
+                username: 'admin', 
+                role: 'administrador' 
+            }, JWT_SECRET, { expiresIn: '8h' });
+            res.json({ 
+                success: true, 
+                token, 
+                user: { username: 'admin', role: 'administrador' } 
+            });
         } else {
-            res.status(401).json({ error: 'Senha incorreta!' });
+            res.status(401).json({ error: 'Usuário ou senha incorretos!' });
         }
     } catch (error) {
         console.error('Login error:', error);
@@ -335,26 +368,100 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// User Management (Admin Only)
+app.get('/api/users', authenticateToken, authorizeAdmin, async (req, res) => {
+    try {
+        const users = await readUsers();
+        // Don't send passwords
+        const publicUsers = users.map(({ password, ...rest }) => rest);
+        res.json(publicUsers);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+app.post('/api/users', authenticateToken, authorizeAdmin, async (req, res) => {
+    try {
+        const { username, password, role } = req.body;
+        if (!username || !password || !role) {
+            return res.status(400).json({ error: 'Preencha todos os campos!' });
+        }
+
+        const users = await readUsers();
+        if (users.some(u => u.username === username)) {
+            return res.status(400).json({ error: 'Usuário já existe!' });
+        }
+
+        const hashedPassword = await argon2.hash(password);
+        const newUser = {
+            id: Date.now().toString(),
+            username,
+            password: hashedPassword,
+            role, // 'administrador' or 'comum'
+            createdAt: new Date().toISOString()
+        };
+
+        users.push(newUser);
+        await writeUsers(users);
+
+        const { password: _, ...userNoPass } = newUser;
+        res.status(201).json(userNoPass);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create user' });
+    }
+});
+
+app.delete('/api/users/:id', authenticateToken, authorizeAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        let users = await readUsers();
+        users = users.filter(u => u.id !== id);
+        await writeUsers(users);
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
+});
+
 // Change Password
 app.post('/api/change-password', authenticateToken, async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
+        const { username, role } = req.user;
 
         if (!oldPassword || !newPassword) {
             return res.status(400).json({ error: 'Senha atual e nova senha são obrigatórias' });
         }
 
-        const settings = await require('./data_storage').readSettings();
-        const isMatch = await argon2.verify(settings.adminPassword, oldPassword);
+        if (username === 'admin') {
+            // Legacy/Main Admin Password Change
+            const settings = await require('./data_storage').readSettings();
+            const isMatch = await argon2.verify(settings.adminPassword, oldPassword);
 
-        if (!isMatch) {
-            return res.status(401).json({ error: 'Senha atual incorreta!' });
+            if (!isMatch) {
+                return res.status(401).json({ error: 'Senha atual incorreta!' });
+            }
+
+            const hashedPassword = await argon2.hash(newPassword);
+            settings.adminPassword = hashedPassword;
+            await require('./data_storage').writeSettings(settings);
+        } else {
+            // Multi-user Password Change
+            const users = await readUsers();
+            const userIndex = users.findIndex(u => u.username === username);
+            
+            if (userIndex === -1) {
+                return res.status(404).json({ error: 'Usuário não encontrado' });
+            }
+
+            const isMatch = await argon2.verify(users[userIndex].password, oldPassword);
+            if (!isMatch) {
+                return res.status(401).json({ error: 'Senha atual incorreta!' });
+            }
+
+            users[userIndex].password = await argon2.hash(newPassword);
+            await writeUsers(users);
         }
-
-        const hashedPassword = await argon2.hash(newPassword);
-        settings.adminPassword = hashedPassword;
-        
-        await require('./data_storage').writeSettings(settings);
 
         res.json({ success: true, message: 'Senha alterada com sucesso!' });
     } catch (error) {
@@ -364,7 +471,7 @@ app.post('/api/change-password', authenticateToken, async (req, res) => {
 });
 
 // Upload Logo Image
-app.post('/api/upload-logo', authenticateToken, upload.single('logo'), async (req, res) => {
+app.post('/api/upload-logo', authenticateToken, authorizeAdmin, upload.single('logo'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'Nenhum arquivo foi enviado' });
