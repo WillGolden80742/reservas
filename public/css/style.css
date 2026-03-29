@@ -92,6 +92,9 @@ main {
     padding: 16px;
     max-width: 600px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 .content-view h2 {
@@ -440,6 +443,8 @@ main {
     background: var(--secondary-bg);
     width: 100%;
     max-height: 90vh;
+    max-width: 700px;
+    margin: 0 auto;
     border-radius: 20px 20px 0 0;
     padding: 20px 16px 40px;
     overflow-y: auto;
@@ -798,6 +803,303 @@ input:checked+.slider:before {
     color: var(--secondary-text);
     padding: 40px 20px;
     font-size: 15px;
+}
+
+/* Mobile Portrait Responsive Styles */
+@media (max-width: 767px) {
+    /* Adjust body padding for better space usage on mobile */
+    body {
+        padding-bottom: 70px;
+    }
+
+    /* Reduce header size on mobile */
+    header {
+        padding: 12px 12px 6px;
+    }
+
+    header h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+
+    /* Reduce main content padding */
+    main {
+        padding: 12px;
+        max-width: 100%;
+    }
+
+    .content-view h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    /* Calendar optimizations for mobile */
+    .calendar-nav {
+        padding: 8px;
+        margin-bottom: 12px;
+    }
+
+    .calendar-nav h2 {
+        font-size: 16px;
+    }
+
+    .calendar-nav button {
+        width: 32px;
+        height: 32px;
+        font-size: 20px;
+    }
+
+    /* Reduce calendar grid gap and padding aggressively */
+    .calendar-grid {
+        gap: 2px;
+        padding: 8px;
+        border-radius: 10px;
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .calendar-day-header {
+        font-size: 10px;
+        padding-bottom: 3px;
+    }
+
+    .calendar-day {
+        font-size: 11px;
+        border-radius: 6px;
+        aspect-ratio: 1;
+        padding-top: 2px;
+    }
+
+    /* Make indicators smaller on mobile */
+    .reservation-indicator,
+    .order-indicator {
+        height: 10px;
+        font-size: 7px;
+        margin-top: 1px;
+        padding: 0 2px;
+        width: 95%;
+    }
+
+    .calendar-day.selected-day .reservation-indicator,
+    .calendar-day.selected-day .order-indicator {
+        height: 9px;
+        font-size: 6px;
+    }
+
+    /* Reduce list items padding */
+    .upcoming-item,
+    .item-item,
+    .contact-item {
+        padding: 12px;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+
+    .name,
+    .name-qty {
+        font-size: 15px;
+    }
+
+    .phone {
+        font-size: 13px;
+    }
+
+    .time {
+        font-size: 12px;
+    }
+
+    /* Compact buttons on mobile */
+    .upcoming-item-actions,
+    .item-actions,
+    .contact-actions {
+        gap: 6px;
+        padding-top: 6px;
+    }
+
+    .upcoming-item-actions button,
+    .item-actions button,
+    .contact-actions button,
+    .upcoming-item-actions a,
+    .item-actions a,
+    .contact-actions a {
+        padding: 6px 10px;
+        font-size: 12px;
+        gap: 4px;
+    }
+
+    /* Search bar optimization */
+    .search-bar-container {
+        padding: 6px 10px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+    }
+
+    .search-icon {
+        font-size: 18px;
+        margin-right: 6px;
+    }
+
+    .search-bar-container input {
+        font-size: 15px;
+    }
+
+    /* Form controls on mobile */
+    .form-group label {
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px;
+        font-size: 15px;
+        border-radius: 8px;
+    }
+
+    .primary-button {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    /* Modal optimization */
+    .modal-content {
+        border-radius: 16px 16px 0 0;
+        padding: 16px 12px 30px;
+    }
+
+    .login-modal {
+        max-width: 100%;
+        padding: 24px 16px;
+    }
+
+    /* Tab navigation on mobile */
+    .tab-navigation {
+        padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    }
+
+    .tab-button {
+        font-size: 9px;
+        gap: 3px;
+    }
+
+    .tab-button .mdi {
+        font-size: 20px;
+    }
+
+    /* Top actions - make single column on very small screens */
+    .top-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .top-actions .search-bar-container {
+        flex: 1;
+    }
+
+    .top-actions .primary-button {
+        width: 100%;
+    }
+
+    /* Settings section */
+    .settings-section {
+        padding: 16px;
+        margin-bottom: 18px;
+    }
+
+    .settings-section h3 {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+
+    /* Courtesy options on mobile */
+    #courtesy-options-list {
+        gap: 8px;
+    }
+
+    .courtesy-item {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    /* Contact notes */
+    .contact-notes {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+
+    /* Reduce modal header */
+    .modal-header h3 {
+        font-size: 18px;
+    }
+
+    .modal-close-button {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* Empty state message */
+    #no-upcoming-items-message,
+    #no-orders-message,
+    #no-contacts-message,
+    #no-items-message {
+        padding: 30px 15px;
+        font-size: 13px;
+    }
+
+    /* Status badge */
+    .status-badge {
+        padding: 2px 6px;
+        font-size: 9px;
+    }
+
+    /* Alert modal for mobile */
+    .alert-modal-content {
+        width: calc(100% - 40px);
+        max-width: 280px;
+        padding: 16px;
+    }
+
+    .alert-modal-content h3 {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    .alert-modal-content p {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+}
+
+/* Extra small screens (below 480px) */
+@media (max-width: 479px) {
+    header h1 {
+        font-size: 24px;
+    }
+
+    .calendar-grid {
+        gap: 1px;
+        padding: 6px;
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .calendar-day {
+        font-size: 10px;
+        border-radius: 5px;
+    }
+
+    .calendar-day-header {
+        font-size: 9px;
+        padding-bottom: 2px;
+    }
+
+    .reservation-indicator,
+    .order-indicator {
+        height: 9px;
+        font-size: 6px;
+        margin-top: 0.5px;
+    }
 }
 
 /* Print Styles */

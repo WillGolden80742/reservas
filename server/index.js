@@ -294,6 +294,34 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Change Password
+app.post('/api/change-password', authenticateToken, async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ error: 'Senha atual e nova senha são obrigatórias' });
+        }
+
+        const settings = await require('./data_storage').readSettings();
+        const isMatch = await argon2.verify(settings.adminPassword, oldPassword);
+
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Senha atual incorreta!' });
+        }
+
+        const hashedPassword = await argon2.hash(newPassword);
+        settings.adminPassword = hashedPassword;
+        
+        await require('./data_storage').writeSettings(settings);
+
+        res.json({ success: true, message: 'Senha alterada com sucesso!' });
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ error: 'Falha ao alterar a senha' });
+    }
+});
+
 // Serve frontend
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));

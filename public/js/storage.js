@@ -284,5 +284,31 @@ async function loginApi(password) {
     }
 }
 
+async function changePasswordApi(oldPassword, newPassword) {
+    try {
+        const response = await fetch(`${API_URL}/change-password`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({ oldPassword, newPassword })
+        });
+        if (response.status === 401 || response.status === 403) {
+            handleAuthError();
+            return { success: false, error: 'Não autorizado' };
+        }
+        if (response.ok) {
+            const data = await response.json();
+            return { success: true, message: data.message };
+        } else {
+            const data = await response.json();
+            return { success: false, error: data.error };
+        }
+    } catch (e) {
+        console.error("Erro ao alterar senha:", e);
+        return { success: false, error: 'Erro ao alterar a senha' };
+    }
+}
+
+window.changePasswordApi = changePasswordApi;
+
 function checkLocalStorageCapacity() { }
 function cleanOldItems() { }

@@ -72,7 +72,7 @@ const DOM = {
     settingsTab: document.getElementById('settingsTab'),
     settingsForm: document.getElementById('settings-form'),
     settingsDaysInput: document.getElementById('settings-days'),
-    settingsHoursInput: document.getElementById('settings-hours'),
+    settingsHoursContainer: document.getElementById('settings-hours-container'),
     settingsMinPeopleInput: document.getElementById('settings-min-people'),
     settingsCourtesyRuleInput: document.getElementById('settings-courtesy-rule'),
     settingsCourtesyOptionsContainer: document.getElementById('settings-courtesy-options'),
@@ -83,6 +83,8 @@ const DOM = {
     settingsWhatsappInput: document.getElementById('settings-whatsapp'),
     newTagInput: document.getElementById('new-tag-input'),
     addTagButton: document.getElementById('add-tag-button'),
+    newHourInput: document.getElementById('new-hour-input'),
+    addHourButton: document.getElementById('add-hour-button'),
     saveSettingsButton: document.getElementById('save-settings-button'),
 
     loginOverlay: document.getElementById('login-overlay'),
@@ -110,6 +112,13 @@ const DOM = {
 
     printModal: document.getElementById('print-modal'),
     logoutBtn: document.getElementById('logout-button'),
+
+    // Change Password Elements
+    currentPasswordInput: document.getElementById('current-password'),
+    newPasswordInput: document.getElementById('new-password'),
+    confirmPasswordInput: document.getElementById('confirm-password'),
+    changePasswordButton: document.getElementById('change-password-button'),
+    changePasswordMessage: document.getElementById('change-password-message'),
 };
 
 let currentMonth = new Date();
@@ -1099,7 +1108,6 @@ async function renderSettings() {
     if (!currentSettings) return;
 
     DOM.settingsDaysInput.value = currentSettings.schedules.days.join(', ');
-    DOM.settingsHoursInput.value = currentSettings.schedules.hours.join(', ');
     DOM.settingsMinPeopleInput.value = currentSettings.schedules.minPeople;
     DOM.settingsCourtesyRuleInput.value = currentSettings.courtesies.rule;
     DOM.settingsPixKeyInput.value = currentSettings.pix.key;
@@ -1108,6 +1116,7 @@ async function renderSettings() {
     DOM.settingsPricePerKgInput.value = currentSettings.pix.pricePerKg;
     DOM.settingsWhatsappInput.value = currentSettings.whatsappNumber || '';
 
+    renderHoursTags();
     renderCourtesyTags();
 }
 
@@ -1123,6 +1132,21 @@ function renderCourtesyTags() {
             renderCourtesyTags();
         });
         DOM.settingsCourtesyOptionsContainer.appendChild(tag);
+    });
+}
+
+function renderHoursTags() {
+    DOM.settingsHoursContainer.innerHTML = '';
+    currentSettings.schedules.hours.forEach(hour => {
+        const tag = document.createElement('div');
+        tag.classList.add('tag');
+        tag.innerHTML = `${hour} <span class="mdi mdi-close" data-hour="${hour}"></span>`;
+        tag.querySelector('.mdi-close').addEventListener('click', (e) => {
+            const hr = e.target.dataset.hour;
+            currentSettings.schedules.hours = currentSettings.schedules.hours.filter(h => h !== hr);
+            renderHoursTags();
+        });
+        DOM.settingsHoursContainer.appendChild(tag);
     });
 }
 
@@ -1216,12 +1240,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    DOM.addHourButton.addEventListener('click', () => {
+        const val = DOM.newHourInput.value.trim();
+        const timeRegex = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/;
+        
+        if (!val) {
+            openModal(DOM.alertModalOverlay, 'Campo vazio', 'Digite um horário no formato HH:MM', 'warning');
+            return;
+        }
+        
+        if (!timeRegex.test(val)) {
+            openModal(DOM.alertModalOverlay, 'Formato inválido', 'Use o formato HH:MM (ex: 12:00)', 'warning');
+            return;
+        }
+        
+        if (currentSettings.schedules.hours.includes(val)) {
+            openModal(DOM.alertModalOverlay, 'Horário duplicado', 'Este horário já foi adicionado', 'warning');
+            return;
+        }
+        
+        currentSettings.schedules.hours.push(val);
+        currentSettings.schedules.hours.sort();
+        renderHoursTags();
+        DOM.newHourInput.value = '';
+    });
+
     DOM.settingsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const updatedSettings = {
             schedules: {
                 days: DOM.settingsDaysInput.value.split(',').map(s => s.trim()),
-                hours: DOM.settingsHoursInput.value.split(',').map(s => s.trim()),
+                hours: currentSettings.schedules.hours,
                 minPeople: parseInt(DOM.settingsMinPeopleInput.value)
             },
             courtesies: {
@@ -1487,4 +1536,71 @@ document.addEventListener('DOMContentLoaded', async () => {
             logout(); // From storage.js
         });
     }
+
+    if (DOM.changePasswordButton) {
+        DOM.changePasswordButton.addEventListener('click', async () => {
+            const currentPassword = DOM.currentPasswordInput.value.trim();
+            const newPassword = DOM.newPasswordInput.value.trim();
+            const confirmPassword = DOM.confirmPasswordInput.value.trim();
+
+            // Reset message
+            DOM.changePasswordMessage.style.display = 'none';
+            DOM.changePasswordMessage.textContent = '';
+
+            // Validations
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                DOM.changePasswordMessage.textContent = 'Por favor, preencha todos os campos!';
+                DOM.changePasswordMessage.style.color = '#e74c3c';
+                DOM.changePasswordMessage.style.display = 'block';
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                DOM.changePasswordMessage.textContent = 'As novas senhas não coincadem!';
+                DOM.changePasswordMessage.style.color = '#e74c3c';
+                DOM.changePasswordMessage.style.display = 'block';
+                return;
+            }
+
+            if (newPassword.length < 4) {
+                DOM.changePasswordMessage.textContent = 'A nova senha deve ter pelo menos 4 caracteres!';
+                DOM.changePasswordMessage.style.color = '#e74c3c';
+                DOM.changePasswordMessage.style.display = 'block';
+                return;
+            }
+
+            // Call API
+            DOM.changePasswordButton.disabled = true;
+            DOM.changePasswordButton.textContent = 'Alterando...';
+
+            const result = await changePasswordApi(currentPassword, newPassword);
+
+            if (result.success) {
+                DOM.changePasswordMessage.textContent = 'Senha alterada com sucesso!';
+                DOM.changePasswordMessage.style.color = '#27ae60';
+                DOM.changePasswordMessage.style.display = 'block';
+
+                // Clear inputs
+                DOM.currentPasswordInput.value = '';
+                DOM.newPasswordInput.value = '';
+                DOM.confirmPasswordInput.value = '';
+
+                // Reset button
+                setTimeout(() => {
+                    DOM.changePasswordButton.disabled = false;
+                    DOM.changePasswordButton.textContent = 'Alterar Senha';
+                    DOM.changePasswordMessage.style.display = 'none';
+                }, 3000);
+            } else {
+                DOM.changePasswordMessage.textContent = result.error || 'Erro ao alterar a senha!';
+                DOM.changePasswordMessage.style.color = '#e74c3c';
+                DOM.changePasswordMessage.style.display = 'block';
+
+                // Reset button
+                DOM.changePasswordButton.disabled = false;
+                DOM.changePasswordButton.textContent = 'Alterar Senha';
+            }
+        });
+    }
 });
+
