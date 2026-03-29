@@ -1,0 +1,32 @@
+[
+  {
+    "status": "Confirmado",
+    "type": "reservation",
+    "date": "2026-03-30",
+    "qtyPeople": 12,
+    "phone": "5555319999999",
+    "name": "admin",
+    "time": "13:00",
+    "isBirthday": true,
+    "courtesy": "Não especificado",
+    "observations": "Pelo link público. Bolo: Sim.",
+    "id": "1774760425121",
+    "createdAt": "2026-03-29T05:00:25.121Z",
+    "description": null,
+    "updatedAt": "2026-03-29T13:23:33.803Z"
+  },
+  {
+    "status": "Pendente",
+    "type": "reservation",
+    "date": "2026-03-31",
+    "qtyPeople": 12,
+    "phone": "5555319999999",
+    "name": "admin",
+    "time": "13:00",
+    "isBirthday": true,
+    "courtesy": "Não especificado",
+    "observations": "Pelo link público. Bolo: Sim.",
+    "id": "1774760443338",
+    "createdAt": "2026-03-29T05:00:43.338Z"
+  }
+]

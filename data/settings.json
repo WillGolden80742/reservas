@@ -1,0 +1,48 @@
+{
+  "schedules": {
+    "days": [
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta"
+    ],
+    "specialDates": [
+      "05/04/2026"
+    ],
+    "hours": [
+      "12:00",
+      "12:30",
+      "13:00",
+      "13:30",
+      "14:00",
+      "14:30",
+      "15:00",
+      "15:30",
+      "16:00",
+      "16:30",
+      "17:00",
+      "17:30",
+      "18:00",
+      "18:30",
+      "19:00",
+      "19:30",
+      "20:00",
+      "20:30",
+      "21:00",
+      "21:30"
+    ],
+    "minPeople": 10
+  },
+  "courtesies": {
+    "rule": "1kg Grátis (Válido para 10+ pessoas)"
+  },
+  "pix": {
+    "key": "13791998000131",
+    "owner": "LORUSSOPROD",
+    "city": "SAO PAULO",
+    "pricePerKg": 95
+  },
+  "whatsappNumber": "5511967105333",
+  "adminPassword": "$argon2id$v=19$m=65536,t=3,p=4$ATBp+ZKay4aBO5SkmEgXfQ$yfGA1/aK1EJKOjB+ReP7pmDZLoUFH9fv211kjMpDCc8",
+  "logo": "/images/bg.png"
+}
