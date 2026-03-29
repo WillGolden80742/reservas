@@ -846,6 +846,10 @@ input:checked+.slider:before {
     font-size: 15px;
 }
 
+.calendar-day {
+    min-width: 100%;
+}
+
 /* Mobile Portrait Responsive Styles */
 @media (max-width: 767px) {
 
