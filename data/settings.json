@@ -6,7 +6,9 @@
       "Quarta",
       "Quinta"
     ],
-    "specialDates": [],
+    "specialDates": [
+      "05/04/2026"
+    ],
     "hours": [
       "12:00",
       "12:30",
