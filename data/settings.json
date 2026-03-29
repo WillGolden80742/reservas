@@ -4,8 +4,10 @@
       "Segunda",
       "Terça",
       "Quarta",
-      "Quinta"
+      "Quinta",
+      "Sexta"
     ],
+    "specialDates": [],
     "hours": [
       "12:00",
       "12:30",

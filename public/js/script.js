@@ -71,7 +71,10 @@ const DOM = {
     settingsView: document.getElementById('settings-view'),
     settingsTab: document.getElementById('settingsTab'),
     settingsForm: document.getElementById('settings-form'),
-    settingsDaysInput: document.getElementById('settings-days'),
+    settingsDaysCheckboxes: document.getElementById('settings-days-checkboxes'),
+    settingsSpecialDatesContainer: document.getElementById('settings-special-dates-container'),
+    newSpecialDateInput: document.getElementById('new-special-date-input'),
+    addSpecialDateButton: document.getElementById('add-special-date-button'),
     settingsHoursContainer: document.getElementById('settings-hours-container'),
     settingsMinPeopleInput: document.getElementById('settings-min-people'),
     settingsCourtesyRuleInput: document.getElementById('settings-courtesy-rule'),
@@ -1210,7 +1213,14 @@ async function renderSettings() {
     currentSettings = await loadSettingsApi();
     if (!currentSettings) return;
 
-    DOM.settingsDaysInput.value = currentSettings.schedules.days.join(', ');
+    // Populate day checkboxes
+    const activeDays = currentSettings.schedules.days || [];
+    DOM.settingsDaysCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = activeDays.includes(cb.value);
+    });
+    
+    // Render special dates tags
+    renderSpecialDateTags();
     DOM.settingsMinPeopleInput.value = currentSettings.schedules.minPeople;
     DOM.settingsCourtesyRuleInput.value = currentSettings.courtesies.rule;
     DOM.settingsPixKeyInput.value = currentSettings.pix.key;
@@ -1273,6 +1283,40 @@ function renderHoursTags() {
             renderHoursTags();
         });
         DOM.settingsHoursContainer.appendChild(tag);
+    });
+}
+
+function renderSpecialDateTags() {
+    DOM.settingsSpecialDatesContainer.innerHTML = '';
+    const specialDates = currentSettings.schedules.specialDates || [];
+    
+    if (specialDates.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.style.cssText = 'padding: 12px; text-align: center; color: var(--secondary-text); font-size: 13px;';
+        emptyMsg.innerHTML = '<span class="mdi mdi-calendar-blank-outline"></span> Nenhuma data especial adicionada.';
+        DOM.settingsSpecialDatesContainer.appendChild(emptyMsg);
+        return;
+    }
+    
+    // Sort dates chronologically
+    const sortedDates = [...specialDates].sort((a, b) => {
+        const [dA, mA, yA] = a.split('/');
+        const [dB, mB, yB] = b.split('/');
+        return new Date(yA, mA - 1, dA) - new Date(yB, mB - 1, dB);
+    });
+    
+    sortedDates.forEach(dateStr => {
+        const tag = document.createElement('div');
+        tag.classList.add('tag', 'special-date-tag');
+        tag.innerHTML = `<span class="mdi mdi-calendar-star"></span> ${dateStr} <span class="mdi mdi-close" data-date="${dateStr}"></span>`;
+        
+        tag.querySelector('.mdi-close').addEventListener('click', (e) => {
+            const dt = e.target.dataset.date;
+            currentSettings.schedules.specialDates = currentSettings.schedules.specialDates.filter(d => d !== dt);
+            renderSpecialDateTags();
+        });
+        
+        DOM.settingsSpecialDatesContainer.appendChild(tag);
     });
 }
 
@@ -1436,7 +1480,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         const updatedSettings = {
             schedules: {
-                days: DOM.settingsDaysInput.value.split(',').map(s => s.trim()),
+                days: Array.from(DOM.settingsDaysCheckboxes.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value),
+                specialDates: currentSettings.schedules.specialDates || [],
                 hours: currentSettings.schedules.hours,
                 minPeople: parseInt(DOM.settingsMinPeopleInput.value)
             },
