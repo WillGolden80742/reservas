@@ -172,6 +172,32 @@
                     </div>
 
                     <div class="settings-section">
+                        <h3><span class="mdi mdi-palette"></span> Cores e Tema</h3>
+                        <div class="form-group">
+                            <label for="settings-primary-color">Cor Primária:</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="color" id="settings-primary-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
+                                <input type="text" id="settings-primary-color-hex" placeholder="#007AFF" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-secondary-color">Cor Secundária:</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="color" id="settings-secondary-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
+                                <input type="text" id="settings-secondary-color-hex" placeholder="#34C759" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-accent-color">Cor de Destaque:</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="color" id="settings-accent-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
+                                <input type="text" id="settings-accent-color-hex" placeholder="#FF9500" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
+                            </div>
+                        </div>
+                        <button type="button" class="secondary-button" id="reset-colors-button" style="margin-top: 10px;">Restaurar Cores Padrão</button>
+                    </div>
+
+                    <div class="settings-section">
                         <h3><span class="mdi mdi-image"></span> Logo da Aplicação</h3>
                         <div class="form-group">
                             <label>Fazer Upload de Nova Logo:</label>
@@ -398,6 +424,7 @@
     <!-- External JS Scripts -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/storage.js"></script>
+    <script src="js/colors.js"></script>
     <script src="js/script.js"></script>
 </body>
 

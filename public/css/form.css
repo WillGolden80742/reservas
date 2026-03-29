@@ -1,7 +1,13 @@
 :root {
-    --primary: #c0392b;
-    --secondary: #27ae60;
-    --accent: #f39c12;
+    /* Colors configuráveis via admin */
+    --primary-color: #c0392b;
+    --secondary-color: #27ae60;
+    --accent-color: #f39c12;
+    
+    /* Cores legadas para compatibilidade */
+    --primary: var(--primary-color);
+    --secondary: var(--secondary-color);
+    --accent: var(--accent-color);
     --text: #2d3436;
     --bg-overlay: rgba(255, 255, 255, 0.98);
     --radius: 15px;

@@ -1,5 +1,10 @@
 :root {
+    /* Colors configuráveis via admin */
     --primary-color: #007AFF;
+    --secondary-color: #34C759;
+    --accent-color: #FF9500;
+    
+    /* Cores do sistema */
     --primary-bg: #F2F2F7;
     --secondary-bg: #FFFFFF;
     --text-color: #000000;
