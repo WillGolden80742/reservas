@@ -43,6 +43,12 @@
 
     <div id="app" style="display: none;">
 
+        <!-- Logout Button -->
+        <button type="button" id="logout-button" class="logout-btn" title="Sair da sessão">
+            <span class="mdi mdi-logout"></span>
+            <span>Sair</span>
+        </button>
+
         <main>
             <!-- Calendar View -->
             <section id="calendar-view" class="content-view">
@@ -124,13 +130,9 @@
                         <span class="mdi mdi-currency-usd"></span>
                         <span>PIX</span>
                     </button>
-                    <button class="settings-tab-btn" data-tab="cores">
+                    <button class="settings-tab-btn" data-tab="aparencia">
                         <span class="mdi mdi-palette"></span>
-                        <span>Cores</span>
-                    </button>
-                    <button class="settings-tab-btn" data-tab="logo">
-                        <span class="mdi mdi-image"></span>
-                        <span>Logo</span>
+                        <span>Aparência</span>
                     </button>
                     <button class="settings-tab-btn" data-tab="senha">
                         <span class="mdi mdi-lock"></span>
@@ -242,8 +244,8 @@
                         </div>
                     </div>
 
-                    <!-- Cores Tab -->
-                    <div class="settings-tab-content" data-tab="cores">
+                    <!-- Aparência Tab (Cores + Logo) -->
+                    <div class="settings-tab-content" data-tab="aparencia">
                         <div class="settings-section">
                             <h3><span class="mdi mdi-palette"></span> Cores e Tema</h3>
                             <div class="form-group">
@@ -269,10 +271,7 @@
                             </div>
                             <button type="button" class="secondary-button" id="reset-colors-button" style="margin-top: 10px;">Restaurar Cores Padrão</button>
                         </div>
-                    </div>
 
-                    <!-- Logo Tab -->
-                    <div class="settings-tab-content" data-tab="logo">
                         <div class="settings-section">
                             <h3><span class="mdi mdi-image"></span> Logo da Aplicação</h3>
                             <div class="form-group">
@@ -350,8 +349,6 @@
 
                     <div class="settings-actions">
                         <button type="submit" class="primary-button" id="save-settings-button">Salvar Configurações</button>
-                        <button type="button" class="secondary-button" id="logout-button"
-                            style="margin-top: 10px; background-color: #e74c3c; color: white;">Sair / Logout</button>
                     </div>
                 </form>
             </section>

@@ -4,6 +4,17 @@ let dataSelecionada = "";
 let dataAtualFoco = new Date();
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Criar backdrop para o calendário
+    const backdrop = document.createElement('div');
+    backdrop.className = 'calendar-backdrop';
+    backdrop.id = 'calendarBackdrop';
+    document.body.appendChild(backdrop);
+    backdrop.addEventListener('click', () => fecharTodos());
+
+    // Mover calendarPanel para o body para escapar do stacking context do .container
+    const calPanel = document.getElementById('calendarPanel');
+    if (calPanel) document.body.appendChild(calPanel);
+
     await fetchSettings();
     initCustomSelects();
     initCalendar();
@@ -20,6 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 function fecharTodos() {
     document.querySelectorAll('.options-container, .calendar-panel').forEach(el => el.classList.remove('show'));
     document.querySelectorAll('.select-simulado').forEach(el => el.classList.remove('active'));
+    const backdrop = document.getElementById('calendarBackdrop');
+    if (backdrop) backdrop.classList.remove('show');
 }
 
 // --- CUSTOM SELECTS ---
@@ -76,6 +89,8 @@ function initCalendar() {
             dataDisplay.classList.add('active');
             renderCalendar();
             document.getElementById('calendarPanel').classList.add('show');
+            const backdrop = document.getElementById('calendarBackdrop');
+            if (backdrop) backdrop.classList.add('show');
         }
         e.stopPropagation();
     });
