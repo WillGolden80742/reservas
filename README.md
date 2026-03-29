@@ -33,7 +33,7 @@ O ReservaPro segue uma arquitetura cliente-servidor, com um frontend desacoplado
 *   **Persistência de Dados:** Atualmente, os dados são persistidos em arquivos JSON localizados na pasta `data/`.
     *   `contacts.json`: Lista de contatos dos clientes.
     *   `courtesies.json`: Opções de cortesia configuráveis.
-    *   `settings.json`: Configurações globais da aplicação (dias/horas de funcionamento, PIX, WhatsApp, logo, senha principal do admin).
+    *   `settings.json`: Configurações globais da aplicação (dias/horas de funcionamento, PIX, WhatsApp, logo, senha principal do admin, **datas bloqueadas**).
     *   `reservas.MM.YYYY.json`: Agendamentos e pedidos, organizados em um arquivo por mês/ano para facilitar o gerenciamento e a carga de dados.
     *   `colors.json`: Configurações de cores da interface.
     *   `users.json`: Informações dos usuários administrativos com diferentes níveis de acesso.
@@ -51,7 +51,7 @@ reservas/
 │   ├── contacts.json                 # Lista de contatos dos clientes
 │   ├── courtesies.json               # Opções de cortesia configuráveis
 │   ├── reservas.MM.YYYY.json         # Agendamentos e pedidos (um arquivo por mês/ano)
-│   ├── settings.json                 # Configurações globais da aplicação
+│   ├── settings.json                 # Configurações globais da aplicação (inclui datas bloqueadas)
 │   └── users.json                    # Usuários administrativos e suas roles
 ├── public/                           # Frontend da aplicação
 │   ├── css/
@@ -104,6 +104,7 @@ Esta seção detalha os requisitos da aplicação, indicando o status de impleme
     *   `✅ Concluído`: Adição/Remoção dinâmica de opções de cortesia através do painel.
 *   **RF1.7: Configurações de Negócio Personalizáveis:**
     *   `✅ Concluído`: Painel de ajustes para configurar dias e horários de funcionamento, quantidade mínima de pessoas para reservas, regras de bolo cortesia, detalhes do PIX (chave, titular, cidade, preço por kg adicional) e número de WhatsApp para contato.
+    *   `✅ Concluído`: **Gerenciamento de Datas Bloqueadas**: Adicione datas específicas (ex: feriados, manutenção) que não estarão disponíveis para agendamento no formulário público.
     *   `✅ Concluído`: Gerenciamento das cores primária, secundária e de destaque da aplicação.
     *   `✅ Concluído`: Upload e gerenciamento do logo da aplicação, que é exibido no frontend e no formulário público.
 *   **RF1.8: Gerenciamento de Usuários (Admin):**
@@ -119,7 +120,7 @@ Esta seção detalha os requisitos da aplicação, indicando o status de impleme
 
 *   **RF2.1: Formulário de Entrada de Dados:**
     *   `✅ Concluído`: Campos validados em tempo real para nome, WhatsApp, data, hora e número de convidados.
-    *   `✅ Concluído`: Calendário interativo para seleção de datas disponíveis e seleção de horários baseados nas configurações do admin.
+    *   `✅ Concluído`: Calendário interativo para seleção de datas disponíveis e seleção de horários baseados nas configurações do admin, **respeitando as datas bloqueadas**.
     *   `✅ Concluído`: Auto preenchimento de telefone com máscara.
 *   **RF2.2: Lógica de Bolo Cortesia:**
     *   `✅ Concluído`: Opção para solicitar bolo cortesia com seleção de sabor (sincronizado das configurações do admin).
@@ -138,7 +139,7 @@ Esta seção detalha os requisitos da aplicação, indicando o status de impleme
     *   `✅ Concluído`: Login para administradores com hashing de senhas via `argon2`.
     *   `✅ Concluído`: Implementação de JWT para autenticação de sessões e middlewares de proteção de rotas.
 *   **RF3.3: Armazenamento de Dados:**
-    *   `✅ Concluído`: Dados persistidos em arquivos JSON organizados por categoria (`contacts.json`, `courtesies.json`, `settings.json`, `colors.json`, `users.json`) e por mês/ano para agendamentos (`reservas.MM.YYYY.json`).
+    *   `✅ Concluído`: Dados persistidos em arquivos JSON organizados por categoria (`contacts.json`, `courtesies.json`, `settings.json` - **incluindo `specialDates`**, `colors.json`, `users.json`) e por mês/ano para agendamentos (`reservas.MM.YYYY.json`).
 *   **RF3.4: Sincronização em Tempo Real (Socket.io):**
     *   `✅ Concluído`: Notifica instantaneamente todos os painéis administrativos conectados sobre qualquer alteração nos dados, garantindo que as informações estejam sempre atualizadas.
 *   **RF3.5: Upload e Processamento de Imagens:**
@@ -242,11 +243,5 @@ Ao contribuir, por favor, siga estas diretrizes:
 *   Crie um branch para sua feature (`git checkout -b feature/minha-feature`).
 *   Faça commits claros e descritivos.
 *   Envie seu Pull Request.
-
----
-
-## Licença
-
-Este projeto está licenciado sob a [Licença ISC](LICENSE).
 
 ---
