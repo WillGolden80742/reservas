@@ -105,165 +105,211 @@
             <!-- Settings View -->
             <section id="settings-view" class="content-view" style="display: none;">
                 <h2>Configurações do Negócio</h2>
+                
+                <!-- Settings Inner Tabs Navigation -->
+                <div class="settings-tabs-nav">
+                    <button class="settings-tab-btn active" data-tab="horarios">
+                        <span class="mdi mdi-clock-outline"></span>
+                        <span>Horários</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="cortesia">
+                        <span class="mdi mdi-cake-variant"></span>
+                        <span>Cortesia</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="pix">
+                        <span class="mdi mdi-currency-usd"></span>
+                        <span>PIX</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="cores">
+                        <span class="mdi mdi-palette"></span>
+                        <span>Cores</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="logo">
+                        <span class="mdi mdi-image"></span>
+                        <span>Logo</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="senha">
+                        <span class="mdi mdi-lock"></span>
+                        <span>Senha</span>
+                    </button>
+                </div>
+
                 <form id="settings-form">
-                    <div class="settings-section">
-                        <h3><span class="mdi mdi-clock-outline"></span> Horários e Regras</h3>
-                        <div class="form-group">
-                            <label for="settings-days">Dias de Funcionamento (separados por vírgula):</label>
-                            <input type="text" id="settings-days" placeholder="Segunda, Terça, Quarta, Quinta">
-                        </div>
-                        <div class="form-group">
-                            <label>Horários Disponíveis:</label>
-                            <div id="settings-hours-container" class="tag-container">
-                                <!-- Tags will be added here -->
+                    <!-- Horários Tab -->
+                    <div class="settings-tab-content active" data-tab="horarios">
+                        <div class="settings-section">
+                            <h3><span class="mdi mdi-clock-outline"></span> Horários e Regras</h3>
+                            <div class="form-group">
+                                <label for="settings-days">Dias de Funcionamento (separados por vírgula):</label>
+                                <input type="text" id="settings-days" placeholder="Segunda, Terça, Quarta, Quinta">
                             </div>
-                            <div class="input-with-button">
-                                <input type="text" id="new-hour-input" placeholder="00:00" pattern="[0-2][0-9]:[0-5][0-9]" maxlength="5">
-                                <button type="button" id="add-hour-button" class="secondary-button">Adicionar</button>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-min-people">Mínimo de Pessoas para Reserva:</label>
-                            <input type="number" id="settings-min-people" min="1">
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3><span class="mdi mdi-cake-variant"></span> Cortesias e Bolos</h3>
-                        
-                        <div class="form-group">
-                            <label for="settings-courtesy-rule">Regra da Cortesia:</label>
-                            <input type="text" id="settings-courtesy-rule"
-                                placeholder="1kg Grátis (Válido para 10+ pessoas)">
-                            <small style="color: var(--secondary-text); display: block; margin-top: 4px;">
-                                Esta regra aparecerá na página de reservas informando aos clientes a política de cortesia.
-                            </small>
-                        </div>
-
-                        <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 8px;">
-                                <span class="mdi mdi-chef-hat"></span>
-                                <strong>Opções de Refresco para Aniversariantes</strong>
-                            </label>
-                            <small style="color: var(--secondary-text); display: block; margin-bottom: 12px;">
-                                Sabores e opções de bolo que aparecem no formulário de reserva quando o cliente marca como "Aniversariante" e seleciona "Sim, desejo o bolo cortesia".
-                            </small>
-                            
-                            <div id="settings-courtesy-options" class="tag-container">
-                                <!-- Tags will be added here dynamically -->
-                            </div>
-                            
-                            <div class="input-with-button" style="margin-top: 12px;">
-                                <input type="text" 
-                                       id="new-tag-input" 
-                                       placeholder="Digite um novo sabor/opção (ex: Brigadeiro, Torta de Chocolate, Mousse)..."
-                                       style="flex: 1;">
-                                <button type="button" id="add-tag-button" class="secondary-button" style="white-space: nowrap;">
-                                    <span class="mdi mdi-plus"></span> Adicionar
-                                </button>
-                            </div>
-                        </div>
-
-                        <div style="background: rgba(52, 152, 219, 0.1); border: 1px solid rgba(52, 152, 219, 0.3); border-radius: 8px; padding: 12px; margin-top: 16px;">
-                            <p style="margin: 0; font-size: 13px; color: var(--secondary-text);">
-                                <span class="mdi mdi-information-outline" style="vertical-align: middle;"></span>
-                                <strong>💡 Sincronização automática:</strong> As opções de bolo cadastradas aqui aparecerão automaticamente no formulário de reserva (form.html) quando for selecionado "Sim, desejo o bolo cortesia".
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3><span class="mdi mdi-currency-usd"></span> Pagamento PIX e Redirecionamento</h3>
-                        <div class="form-group">
-                            <label for="settings-pix-key">Chave PIX:</label>
-                            <input type="text" id="settings-pix-key">
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-pix-owner">Nome do Titular:</label>
-                            <input type="text" id="settings-pix-owner">
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-pix-city">Cidade:</label>
-                            <input type="text" id="settings-pix-city">
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-price-per-kg">Preço por Kg Adicional (R$):</label>
-                            <input type="number" id="settings-price-per-kg" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-whatsapp">WhatsApp para Recebimento (55 + DDD + Número):</label>
-                            <input type="text" id="settings-whatsapp" placeholder="Ex: 5511999999999">
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3><span class="mdi mdi-palette"></span> Cores e Tema</h3>
-                        <div class="form-group">
-                            <label for="settings-primary-color">Cor Primária:</label>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="settings-primary-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
-                                <input type="text" id="settings-primary-color-hex" placeholder="#007AFF" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-secondary-color">Cor Secundária:</label>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="settings-secondary-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
-                                <input type="text" id="settings-secondary-color-hex" placeholder="#34C759" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="settings-accent-color">Cor de Destaque:</label>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="settings-accent-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
-                                <input type="text" id="settings-accent-color-hex" placeholder="#FF9500" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
-                            </div>
-                        </div>
-                        <button type="button" class="secondary-button" id="reset-colors-button" style="margin-top: 10px;">Restaurar Cores Padrão</button>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3><span class="mdi mdi-image"></span> Logo da Aplicação</h3>
-                        <div class="form-group">
-                            <label>Fazer Upload de Nova Logo:</label>
-                            <!-- Input file oculto -->
-                            <input type="file" id="settings-logo-file" accept="image/*" style="display: none;">
-                            <!-- Interface customizada de upload -->
-                            <div id="logo-upload-button" class="upload-area" style="border: 2px dashed var(--primary-color); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; background-color: rgba(0, 122, 255, 0.05); transition: all 0.3s ease;">
-                                <div style="font-size: 2em; color: var(--primary-color); margin-bottom: 10px;">
-                                    <span class="mdi mdi-cloud-upload"></span>
+                            <div class="form-group">
+                                <label>Horários Disponíveis:</label>
+                                <div id="settings-hours-container" class="tag-container">
+                                    <!-- Tags will be added here -->
                                 </div>
-                                <p style="margin: 10px 0; font-weight: 500; color: var(--primary-color);">Clique para fazer upload</p>
-                                <p style="font-size: 0.85em; color: var(--secondary-text); margin: 5px 0;">ou arraste uma imagem aqui</p>
+                                <div class="input-with-button">
+                                    <input type="text" id="new-hour-input" placeholder="00:00" pattern="[0-2][0-9]:[0-5][0-9]" maxlength="5">
+                                    <button type="button" id="add-hour-button" class="secondary-button">Adicionar</button>
+                                </div>
                             </div>
-                            <p style="font-size: 0.9em; color: var(--secondary-text); margin-top: 8px;">Formatos aceitos: JPEG, PNG, WebP, GIF (Máx. 5MB)</p>
-                            <p style="font-size: 0.9em; color: var(--secondary-text); margin-top: 5px;">Preview do logo atual:</p>
-                            <img id="logo-preview" src="" alt="Logo" style="max-width: 150px; max-height: 100px; margin-top: 10px; border-radius: 5px;">
-                            <p id="logo-upload-status" style="text-align: center; margin-top: 10px; display: none;"></p>
+                            <div class="form-group">
+                                <label for="settings-min-people">Mínimo de Pessoas para Reserva:</label>
+                                <input type="number" id="settings-min-people" min="1">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="settings-section">
-                        <h3><span class="mdi mdi-lock"></span> Alterar Senha</h3>
-                        <div class="form-group">
-                            <label for="current-password">Senha Atual:</label>
-                            <input type="password" id="current-password" placeholder="Digite sua senha atual">
+                    <!-- Cortesia Tab -->
+                    <div class="settings-tab-content" data-tab="cortesia">
+                        <div class="settings-section">
+                            <h3><span class="mdi mdi-cake-variant"></span> Cortesias e Bolos</h3>
+                            
+                            <div class="form-group">
+                                <label for="settings-courtesy-rule">Regra da Cortesia:</label>
+                                <input type="text" id="settings-courtesy-rule"
+                                    placeholder="1kg Grátis (Válido para 10+ pessoas)">
+                                <small style="color: var(--secondary-text); display: block; margin-top: 4px;">
+                                    Esta regra aparecerá na página de reservas informando aos clientes a política de cortesia.
+                                </small>
+                            </div>
+
+                            <div class="form-group">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="mdi mdi-chef-hat"></span>
+                                    <strong>Opções de Refresco para Aniversariantes</strong>
+                                </label>
+                                <small style="color: var(--secondary-text); display: block; margin-bottom: 12px;">
+                                    Sabores e opções de bolo que aparecem no formulário de reserva quando o cliente marca como "Aniversariante" e seleciona "Sim, desejo o bolo cortesia".
+                                </small>
+                                
+                                <div id="settings-courtesy-options" class="tag-container">
+                                    <!-- Tags will be added here dynamically -->
+                                </div>
+                                
+                                <div class="input-with-button" style="margin-top: 12px;">
+                                    <input type="text" 
+                                           id="new-tag-input" 
+                                           placeholder="Digite um novo sabor/opção (ex: Brigadeiro, Torta de Chocolate, Mousse)..."
+                                           style="flex: 1;">
+                                    <button type="button" id="add-tag-button" class="secondary-button" style="white-space: nowrap;">
+                                        <span class="mdi mdi-plus"></span> Adicionar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(52, 152, 219, 0.1); border: 1px solid rgba(52, 152, 219, 0.3); border-radius: 8px; padding: 12px; margin-top: 16px;">
+                                <p style="margin: 0; font-size: 13px; color: var(--secondary-text);">
+                                    <span class="mdi mdi-information-outline" style="vertical-align: middle;"></span>
+                                    <strong>💡 Sincronização automática:</strong> As opções de bolo cadastradas aqui aparecerão automaticamente no formulário de reserva (form.html) quando for selecionado "Sim, desejo o bolo cortesia".
+                                </p>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="new-password">Nova Senha:</label>
-                            <input type="password" id="new-password" placeholder="Digite a nova senha">
+                    </div>
+
+                    <!-- PIX Tab -->
+                    <div class="settings-tab-content" data-tab="pix">
+                        <div class="settings-section">
+                            <h3><span class="mdi mdi-currency-usd"></span> Pagamento PIX e Redirecionamento</h3>
+                            <div class="form-group">
+                                <label for="settings-pix-key">Chave PIX:</label>
+                                <input type="text" id="settings-pix-key">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-pix-owner">Nome do Titular:</label>
+                                <input type="text" id="settings-pix-owner">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-pix-city">Cidade:</label>
+                                <input type="text" id="settings-pix-city">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-price-per-kg">Preço por Kg Adicional (R$):</label>
+                                <input type="number" id="settings-price-per-kg" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-whatsapp">WhatsApp para Recebimento (55 + DDD + Número):</label>
+                                <input type="text" id="settings-whatsapp" placeholder="Ex: 5511999999999">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="confirm-password">Confirmar Nova Senha:</label>
-                            <input type="password" id="confirm-password" placeholder="Confirme a nova senha">
+                    </div>
+
+                    <!-- Cores Tab -->
+                    <div class="settings-tab-content" data-tab="cores">
+                        <div class="settings-section">
+                            <h3><span class="mdi mdi-palette"></span> Cores e Tema</h3>
+                            <div class="form-group">
+                                <label for="settings-primary-color">Cor Primária:</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="color" id="settings-primary-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
+                                    <input type="text" id="settings-primary-color-hex" placeholder="#007AFF" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-secondary-color">Cor Secundária:</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="color" id="settings-secondary-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
+                                    <input type="text" id="settings-secondary-color-hex" placeholder="#34C759" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-accent-color">Cor de Destaque:</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="color" id="settings-accent-color" style="width: 60px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">
+                                    <input type="text" id="settings-accent-color-hex" placeholder="#FF9500" maxlength="7" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-family: monospace;">
+                                </div>
+                            </div>
+                            <button type="button" class="secondary-button" id="reset-colors-button" style="margin-top: 10px;">Restaurar Cores Padrão</button>
                         </div>
-                        <button type="button" class="secondary-button" id="change-password-button" style="margin-top: 10px;">Alterar Senha</button>
-                        <p id="change-password-message" style="text-align: center; margin-top: 10px; display: none;"></p>
+                    </div>
+
+                    <!-- Logo Tab -->
+                    <div class="settings-tab-content" data-tab="logo">
+                        <div class="settings-section">
+                            <h3><span class="mdi mdi-image"></span> Logo da Aplicação</h3>
+                            <div class="form-group">
+                                <label>Fazer Upload de Nova Logo:</label>
+                                <!-- Input file oculto -->
+                                <input type="file" id="settings-logo-file" accept="image/*" style="display: none;">
+                                <!-- Interface customizada de upload -->
+                                <div id="logo-upload-button" class="upload-area" style="border: 2px dashed var(--primary-color); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; background-color: rgba(0, 122, 255, 0.05); transition: all 0.3s ease;">
+                                    <div style="font-size: 2em; color: var(--primary-color); margin-bottom: 10px;">
+                                        <span class="mdi mdi-cloud-upload"></span>
+                                    </div>
+                                    <p style="margin: 10px 0; font-weight: 500; color: var(--primary-color);">Clique para fazer upload</p>
+                                    <p style="font-size: 0.85em; color: var(--secondary-text); margin: 5px 0;">ou arraste uma imagem aqui</p>
+                                </div>
+                                <p style="font-size: 0.9em; color: var(--secondary-text); margin-top: 8px;">Formatos aceitos: JPEG, PNG, WebP, GIF (Máx. 5MB)</p>
+                                <p style="font-size: 0.9em; color: var(--secondary-text); margin-top: 5px;">Preview do logo atual:</p>
+                                <img id="logo-preview" src="" alt="Logo" style="max-width: 150px; max-height: 100px; margin-top: 10px; border-radius: 5px;">
+                                <p id="logo-upload-status" style="text-align: center; margin-top: 10px; display: none;"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Senha Tab -->
+                    <div class="settings-tab-content" data-tab="senha">
+                        <div class="settings-section">
+                            <h3><span class="mdi mdi-lock"></span> Alterar Senha</h3>
+                            <div class="form-group">
+                                <label for="current-password">Senha Atual:</label>
+                                <input type="password" id="current-password" placeholder="Digite sua senha atual">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">Nova Senha:</label>
+                                <input type="password" id="new-password" placeholder="Digite a nova senha">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirmar Nova Senha:</label>
+                                <input type="password" id="confirm-password" placeholder="Confirme a nova senha">
+                            </div>
+                            <button type="button" class="secondary-button" id="change-password-button" style="margin-top: 10px;">Alterar Senha</button>
+                            <p id="change-password-message" style="text-align: center; margin-top: 10px; display: none;"></p>
+                        </div>
                     </div>
 
                     <div class="settings-actions">
-                        <button type="submit" class="primary-button" id="save-settings-button">Salvar
-                            Configurações</button>
+                        <button type="submit" class="primary-button" id="save-settings-button">Salvar Configurações</button>
                         <button type="button" class="secondary-button" id="logout-button"
                             style="margin-top: 10px; background-color: #e74c3c; color: white;">Sair / Logout</button>
                     </div>

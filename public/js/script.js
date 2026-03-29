@@ -1666,70 +1666,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    if (DOM.changePasswordButton) {
-        DOM.changePasswordButton.addEventListener('click', async () => {
-            const currentPassword = DOM.currentPasswordInput.value.trim();
-            const newPassword = DOM.newPasswordInput.value.trim();
-            const confirmPassword = DOM.confirmPasswordInput.value.trim();
+    // Settings Tabs Navigation
+    const settingsTabButtons = document.querySelectorAll('.settings-tab-btn');
+    const settingsTabContents = document.querySelectorAll('.settings-tab-content');
 
-            // Reset message
-            DOM.changePasswordMessage.style.display = 'none';
-            DOM.changePasswordMessage.textContent = '';
-
-            // Validations
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                DOM.changePasswordMessage.textContent = 'Por favor, preencha todos os campos!';
-                DOM.changePasswordMessage.style.color = '#e74c3c';
-                DOM.changePasswordMessage.style.display = 'block';
-                return;
-            }
-
-            if (newPassword !== confirmPassword) {
-                DOM.changePasswordMessage.textContent = 'As novas senhas não coincadem!';
-                DOM.changePasswordMessage.style.color = '#e74c3c';
-                DOM.changePasswordMessage.style.display = 'block';
-                return;
-            }
-
-            if (newPassword.length < 4) {
-                DOM.changePasswordMessage.textContent = 'A nova senha deve ter pelo menos 4 caracteres!';
-                DOM.changePasswordMessage.style.color = '#e74c3c';
-                DOM.changePasswordMessage.style.display = 'block';
-                return;
-            }
-
-            // Call API
-            DOM.changePasswordButton.disabled = true;
-            DOM.changePasswordButton.textContent = 'Alterando...';
-
-            const result = await changePasswordApi(currentPassword, newPassword);
-
-            if (result.success) {
-                DOM.changePasswordMessage.textContent = 'Senha alterada com sucesso!';
-                DOM.changePasswordMessage.style.color = '#27ae60';
-                DOM.changePasswordMessage.style.display = 'block';
-
-                // Clear inputs
-                DOM.currentPasswordInput.value = '';
-                DOM.newPasswordInput.value = '';
-                DOM.confirmPasswordInput.value = '';
-
-                // Reset button
-                setTimeout(() => {
-                    DOM.changePasswordButton.disabled = false;
-                    DOM.changePasswordButton.textContent = 'Alterar Senha';
-                    DOM.changePasswordMessage.style.display = 'none';
-                }, 3000);
-            } else {
-                DOM.changePasswordMessage.textContent = result.error || 'Erro ao alterar a senha!';
-                DOM.changePasswordMessage.style.color = '#e74c3c';
-                DOM.changePasswordMessage.style.display = 'block';
-
-                // Reset button
-                DOM.changePasswordButton.disabled = false;
-                DOM.changePasswordButton.textContent = 'Alterar Senha';
+    settingsTabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabName = button.getAttribute('data-tab');
+            
+            // Remove active class from all buttons and contents
+            settingsTabButtons.forEach(btn => btn.classList.remove('active'));
+            settingsTabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding content
+            button.classList.add('active');
+            const activeContent = document.querySelector(`.settings-tab-content[data-tab="${tabName}"]`);
+            if (activeContent) {
+                activeContent.classList.add('active');
             }
         });
-    }
+    });
 });
+
 
