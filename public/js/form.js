@@ -1,4 +1,5 @@
 let settings = null;
+let courtesiesData = [];
 let dataSelecionada = "";
 let dataAtualFoco = new Date();
 
@@ -173,8 +174,12 @@ function maskPhone(input) {
 // --- LÓGICA DE NEGÓCIO ---
 async function fetchSettings() {
     try {
-        const response = await fetch('/api/settings');
-        settings = await response.json();
+        const [settingsRes, courtesiesRes] = await Promise.all([
+            fetch('/api/settings'),
+            fetch('/api/courtesies')
+        ]);
+        settings = await settingsRes.json();
+        courtesiesData = await courtesiesRes.json();
         updateUIWithSettings();
     } catch (error) {
         console.error('Erro ao buscar configurações:', error);
@@ -207,15 +212,15 @@ function updateUIWithSettings() {
     // Quando o admin adiciona/remove um sabor lá, ele aparece automaticamente aqui.
     const saborOptionsContainer = document.getElementById('sabor-options');
     if (saborOptionsContainer) {
-        // Renderizar opções a partir de settings.courtesies.options (sincronizadas do admin)
-        saborOptionsContainer.innerHTML = settings.courtesies.options.map(s => `<div class="option" data-value="${s}">${s}</div>`).join('');
+        // Renderizar opções a partir de courtesiesData (sincronizadas do admin)
+        saborOptionsContainer.innerHTML = courtesiesData.map(s => `<div class="option" data-value="${s}">${s}</div>`).join('');
         
         // Validar se a opção selecionada atual ainda existe (caso tenha sido removida no admin)
         const currentSaborContainer = document.getElementById('sabor');
         const currentSabor = currentSaborContainer.getAttribute('data-value');
-        if (!settings.courtesies.options.includes(currentSabor)) {
-            currentSaborContainer.setAttribute('data-value', settings.courtesies.options[0]);
-            currentSaborContainer.querySelector('span').innerText = settings.courtesies.options[0];
+        if (currentSabor && !courtesiesData.includes(currentSabor)) {
+            currentSaborContainer.setAttribute('data-value', courtesiesData[0] || "");
+            currentSaborContainer.querySelector('span').innerText = courtesiesData[0] || "Selecione o sabor";
         }
     }
 

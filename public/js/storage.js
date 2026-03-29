@@ -308,40 +308,44 @@ async function changePasswordApi(oldPassword, newPassword) {
     }
 }
 
-async function uploadLogoApi(file) {
+async function loadColorsApi() {
     try {
-        const formData = new FormData();
-        formData.append('logo', file);
+        const response = await fetch(`${API_URL}/colors`);
+        if (!response.ok) throw new Error('Failed to fetch colors');
+        return await response.json();
+    } catch (e) {
+        console.error("Erro ao carregar cores da API:", e);
+        return {
+            primary: '#007AFF',
+            secondary: '#34C759',
+            accent: '#FF9500'
+        };
+    }
+}
 
-        const token = getAuthToken();
-        const response = await fetch(`${API_URL}/upload-logo`, {
+async function saveColorsApi(colors) {
+    try {
+        const response = await fetch(`${API_URL}/colors`, {
             method: 'POST',
-            headers: {
-                'Authorization': token ? `Bearer ${token}` : ''
-            },
-            body: formData
+            headers: getAuthHeaders(),
+            body: JSON.stringify(colors)
         });
-
         if (response.status === 401 || response.status === 403) {
             handleAuthError();
-            return { success: false, error: 'Não autorizado' };
+            return;
         }
-
-        if (response.ok) {
-            const data = await response.json();
-            return { success: true, logoPath: data.logoPath };
-        } else {
-            const data = await response.json();
-            return { success: false, error: data.error };
-        }
+        if (!response.ok) throw new Error('Failed to save colors');
+        return await response.json();
     } catch (e) {
-        console.error("Erro ao fazer upload da logo:", e);
-        return { success: false, error: 'Erro ao fazer upload da imagem' };
+        console.error("Erro ao salvar cores via API:", e);
+        throw e;
     }
 }
 
 window.changePasswordApi = changePasswordApi;
 window.uploadLogoApi = uploadLogoApi;
+window.loadColorsApi = loadColorsApi;
+window.saveColorsApi = saveColorsApi;
 
 function checkLocalStorageCapacity() { }
 function cleanOldItems() { }

@@ -31,16 +31,7 @@
     "minPeople": 10
   },
   "courtesies": {
-    "rule": "1kg Grátis (Válido para 10+ pessoas)",
-    "options": [
-      "Brigadeiro",
-      "Brigadeiro Maracujá",
-      "Ninho com Nutella",
-      "Ninho com Morango",
-      "Ninho com Abacaxi",
-      "Mousse de Chocolate",
-      "Prestígio"
-    ]
+    "rule": "1kg Grátis (Válido para 10+ pessoas)"
   },
   "pix": {
     "key": "13791998000131",

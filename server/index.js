@@ -243,7 +243,7 @@ app.put('/api/contacts', authenticateToken, async (req, res) => {
 });
 
 // RF3: Courtesies
-app.get('/api/courtesies', authenticateToken, async (req, res) => {
+app.get('/api/courtesies', async (req, res) => {
     try {
         const data = await require('./data_storage').readCourtesies();
         res.json(data);
@@ -285,6 +285,29 @@ app.post('/api/settings', authenticateToken, async (req, res) => {
 
         // Notify admins
         io.emit('settingsUpdate', newSettings);
+
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+// RF5: Colors
+app.get('/api/colors', async (req, res) => {
+    try {
+        const data = await require('./data_storage').readColors();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.post('/api/colors', authenticateToken, async (req, res) => {
+    try {
+        await require('./data_storage').writeColors(req.body);
+
+        // Notify admins
+        io.emit('colorsUpdate', req.body);
 
         res.json({ success: true });
     } catch (error) {

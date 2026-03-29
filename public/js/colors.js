@@ -12,17 +12,14 @@ const ColorManager = {
         accent: '#FF9500'
     },
 
-    // localStorage key
-    storageKey: 'app_theme_colors',
-
     /**
      * Initialize color manager
      */
-    init() {
-        // Load colors from localStorage or use defaults
-        this.loadColors();
+    async init() {
+        // Load colors from server or use defaults
+        await this.loadColors();
         
-        // Setup event listeners if we're in admin panel
+        // Setup event listeners if we're in admin panel (settings-primary-color exists)
         if (document.getElementById('settings-primary-color')) {
             this.setupColorInputs();
         }
@@ -32,30 +29,38 @@ const ColorManager = {
      * Apply colors to CSS variables
      */
     applyColors(colors) {
+        if (!colors) return;
+        
         const root = document.documentElement;
-        root.style.setProperty('--primary-color', colors.primary);
-        root.style.setProperty('--secondary-color', colors.secondary);
-        root.style.setProperty('--accent-color', colors.accent);
+        root.style.setProperty('--primary-color', colors.primary || this.defaults.primary);
+        root.style.setProperty('--secondary-color', colors.secondary || this.defaults.secondary);
+        root.style.setProperty('--accent-color', colors.accent || this.defaults.accent);
         
         // Also update legacy variables for compatibility
-        root.style.setProperty('--primary', colors.primary);
-        root.style.setProperty('--secondary', colors.secondary);
-        root.style.setProperty('--accent', colors.accent);
+        root.style.setProperty('--primary', colors.primary || this.defaults.primary);
+        root.style.setProperty('--secondary', colors.secondary || this.defaults.secondary);
+        root.style.setProperty('--accent', colors.accent || this.defaults.accent);
         
         // Update accent colors derived from primary/secondary
-        root.style.setProperty('--accent-green', colors.secondary);
-        root.style.setProperty('--accent-orange', colors.accent);
+        root.style.setProperty('--accent-green', colors.secondary || this.defaults.secondary);
+        root.style.setProperty('--accent-orange', colors.accent || this.defaults.accent);
     },
 
     /**
-     * Load colors from localStorage and apply them
+     * Load colors from server and apply them
      */
-    loadColors() {
+    async loadColors() {
         try {
-            const stored = localStorage.getItem(this.storageKey);
-            const colors = stored ? JSON.parse(stored) : this.defaults;
-            this.applyColors(colors);
-            return colors;
+            // Check if loadColorsApi is available (it should be in storage.js)
+            if (typeof window.loadColorsApi === 'function') {
+                const colors = await window.loadColorsApi();
+                this.applyColors(colors);
+                return colors;
+            } else {
+                console.warn('loadColorsApi not found, using defaults');
+                this.applyColors(this.defaults);
+                return this.defaults;
+            }
         } catch (error) {
             console.error('Error loading colors:', error);
             this.applyColors(this.defaults);
@@ -64,13 +69,18 @@ const ColorManager = {
     },
 
     /**
-     * Save colors to localStorage
+     * Save colors to server
      */
-    saveColors(colors) {
+    async saveColors(colors) {
         try {
-            localStorage.setItem(this.storageKey, JSON.stringify(colors));
-            this.applyColors(colors);
-            return true;
+            if (typeof window.saveColorsApi === 'function') {
+                await window.saveColorsApi(colors);
+                this.applyColors(colors);
+                return true;
+            } else {
+                console.warn('saveColorsApi not found');
+                return false;
+            }
         } catch (error) {
             console.error('Error saving colors:', error);
             return false;

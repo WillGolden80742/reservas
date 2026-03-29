@@ -113,8 +113,7 @@ async function readSettings() {
                 minPeople: 10
             },
             courtesies: {
-                rule: '1kg Grátis (Válido para 10+ pessoas)',
-                options: ['Brigadeiro', 'Brigadeiro Maracujá', 'Ninho com Nutella', 'Ninho com Morango', 'Ninho com Abacaxi', 'Mousse de Chocolate', 'Prestígio']
+                rule: '1kg Grátis (Válido para 10+ pessoas)'
             },
             pix: {
                 key: '13791998000131',
@@ -137,14 +136,53 @@ async function writeSettings(data) {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 }
 
+async function readColors() {
+    const filePath = path.join(DATA_DIR, 'colors.json');
+    try {
+        await fs.access(filePath);
+    } catch {
+        const defaultColors = {
+            primary: '#007AFF',
+            secondary: '#34C759',
+            accent: '#FF9500'
+        };
+        await fs.writeFile(filePath, JSON.stringify(defaultColors, null, 2));
+    }
+    const data = await fs.readFile(filePath, 'utf-8');
+    try {
+        const parsed = JSON.parse(data);
+        if (Object.keys(parsed).length === 0) {
+            return {
+                primary: '#007AFF',
+                secondary: '#34C759',
+                accent: '#FF9500'
+            };
+        }
+        return parsed;
+    } catch (e) {
+        return {
+            primary: '#007AFF',
+            secondary: '#34C759',
+            accent: '#FF9500'
+        };
+    }
+}
+
+async function writeColors(data) {
+    const filePath = path.join(DATA_DIR, 'colors.json');
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+}
+
 module.exports = {
     readData,
     writeData,
-    readAllData, // Add this
+    readAllData, 
     readContacts,
     writeContacts,
     readCourtesies,
     writeCourtesies,
     readSettings,
-    writeSettings
+    writeSettings,
+    readColors,
+    writeColors
 };

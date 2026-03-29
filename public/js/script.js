@@ -1135,7 +1135,7 @@ async function renderSettings() {
 function renderCourtesyTags() {
     DOM.settingsCourtesyOptionsContainer.innerHTML = '';
     
-    if (currentSettings.courtesies.options.length === 0) {
+    if (courtesies.length === 0) {
         const emptyMsg = document.createElement('div');
         emptyMsg.style.cssText = 'padding: 16px; text-align: center; color: var(--secondary-text); font-size: 14px;';
         emptyMsg.innerHTML = '<span class="mdi mdi-information-outline"></span> Nenhuma opção de bolo adicionada ainda.';
@@ -1143,7 +1143,7 @@ function renderCourtesyTags() {
         return;
     }
     
-    currentSettings.courtesies.options.forEach(option => {
+    courtesies.forEach(option => {
         const tag = document.createElement('div');
         tag.classList.add('tag');
         tag.innerHTML = `${option} <span class="mdi mdi-close" data-option="${option}"></span>`;
@@ -1153,7 +1153,7 @@ function renderCourtesyTags() {
             openModal(DOM.alertModalOverlay, 'Remover Sabor', `Tem certeza que deseja remover "${opt}" da lista de cortesias?`, 'warning');
             DOM.alertModalOverlay.querySelector('.primary-button').textContent = 'Remover';
             DOM.alertModalOverlay.querySelector('.primary-button').onclick = () => {
-                currentSettings.courtesies.options = currentSettings.courtesies.options.filter(o => o !== opt);
+                courtesies = courtesies.filter(o => o !== opt);
                 renderCourtesyTags();
                 closeModal(DOM.alertModalOverlay);
             };
@@ -1277,12 +1277,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         
-        if (currentSettings.courtesies.options.includes(val)) {
+        if (courtesies.includes(val)) {
             openModal(DOM.alertModalOverlay, 'Opção duplicada', `"${val}" já existe na lista de sabores`, 'warning');
             return;
         }
         
-        currentSettings.courtesies.options.push(val);
+        courtesies.push(val);
         renderCourtesyTags();
         DOM.newTagInput.value = '';
         DOM.newTagInput.focus();
@@ -1322,8 +1322,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 minPeople: parseInt(DOM.settingsMinPeopleInput.value)
             },
             courtesies: {
-                rule: DOM.settingsCourtesyRuleInput.value,
-                options: currentSettings.courtesies.options
+                rule: DOM.settingsCourtesyRuleInput.value
             },
             pix: {
                 key: DOM.settingsPixKeyInput.value,
@@ -1337,8 +1336,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             await saveSettingsApi(updatedSettings);
+            await saveCourtesiesApi(); // Save courtesies separately
             openModal(DOM.alertModalOverlay, 'Sucesso!', 'Configurações salvas com sucesso!', 'success');
-            courtesies = updatedSettings.courtesies.options; // Sync old local array
             renderCourtesyOptions();
         } catch (error) {
             openModal(DOM.alertModalOverlay, 'Erro', 'Não foi possível salvar as configurações.', 'error');
@@ -1657,6 +1656,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         // If settings view is open, re-render it
         if (DOM.settingsView.style.display !== 'none') {
             renderSettings();
+        }
+    });
+
+    socket.on('colorsUpdate', (data) => {
+        console.log('Atualização de cores recebida:', data);
+        if (window.ColorManager) {
+            window.ColorManager.applyColors(data);
+            
+            // If we are in the colors settings tab, update the inputs to match new server state
+            const primaryInput = document.getElementById('settings-primary-color');
+            if (primaryInput && data.primary) {
+                primaryInput.value = window.ColorManager.rgbToHex(data.primary);
+                const primaryHex = document.getElementById('settings-primary-color-hex');
+                if (primaryHex) primaryHex.value = data.primary;
+            }
+            
+            const secondaryInput = document.getElementById('settings-secondary-color');
+            if (secondaryInput && data.secondary) {
+                secondaryInput.value = window.ColorManager.rgbToHex(data.secondary);
+                const secondaryHex = document.getElementById('settings-secondary-color-hex');
+                if (secondaryHex) secondaryHex.value = data.secondary;
+            }
+            
+            const accentInput = document.getElementById('settings-accent-color');
+            if (accentInput && data.accent) {
+                accentInput.value = window.ColorManager.rgbToHex(data.accent);
+                const accentHex = document.getElementById('settings-accent-color-hex');
+                if (accentHex) accentHex.value = data.accent;
+            }
         }
     });
 
